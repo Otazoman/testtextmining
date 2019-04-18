@@ -36,7 +36,7 @@ install pillow
 
 ## Usage
 $ python3 mecabsample.py inputfilename outputname  
-$ python3 wordcloudsample.py inputfilename outputname 
+$ python3 wordcloudsample.py inputfilename outputname   
 $ python3 getrssfeed.py feedlistfilename outputfilename  
 
 ## Environment Setup
