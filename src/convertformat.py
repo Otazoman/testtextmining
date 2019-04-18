@@ -11,6 +11,31 @@ import time
 import traceback
 
 import feedparser
+import MeCab
+
+def word_tokenaize(doc):
+    """
+    Mecabを使用して与えられたテキストを解析する
+    名詞のみを取り出してリストに格納する
+    """
+    try:
+        tagger = MeCab.Tagger(" -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd")
+        tagger.parse("")
+        node = tagger.parse(doc)
+        results = []
+        lines=[]
+        lines=node.split('\n')
+        for item in lines:
+           cw = item.split('\t')[0]
+           if len(item) > 5:
+              ps = item.split('\t')[1].split(',')[0]
+              if  ps == '名詞':
+                  results.append(cw)
+        return results
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
 
 def getfeedword(input_file):
     """
@@ -35,14 +60,22 @@ def getfeedword(input_file):
 def main():
     """
     主処理
-    第1引数から入力ファイル、第2引数から出力ファイルを取得する
+    第1引数で入力ファイルを取得し、名詞を抽出してランキングにする。
     """
     try:
         start_t = time.perf_counter()
         input_file = sys.argv[1]
-        
-        r = getfeedword(input_file)
-        print(r)
+
+        feedword = getfeedword(input_file)
+
+        wt = []
+        for l in feedword:
+            wc = word_tokenaize(l)
+            wt.extend(wc)
+
+        result = collections.Counter(wt)
+        for word, cnt in sorted(result.items(),key=lambda x: x[1], reverse=True):
+            print(word, cnt)
 
         end_t = time.perf_counter()
         process_time = end_t - start_t
