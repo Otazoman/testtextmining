@@ -35,9 +35,9 @@ wordcloud
 install pillow  
 
 ## Usage
-$ python3 mecabsample.py <inputfilename> <outputname>  
-$ python3 wordcloudsample.py <inputfilename> <outputname>  
-$ python3 getrssfeed.py <feedlistfilename> <outputfilename>  
+$ python3 mecabsample.py inputfilename outputname  
+$ python3 wordcloudsample.py inputfilename outputname 
+$ python3 getrssfeed.py feedlistfilename outputfilename  
 
 ## Environment Setup
 $ sudo apt-get -y install mecab mecab-ipadic-utf8 libmecab-dev python-mecab  
@@ -73,7 +73,7 @@ $ rm -Rf CRF*
 $ rm -Rf cabocha*  
 $ sudo apt -y install fonts-ipaexfont  
 
-## Liblary Install
+## Library Install
 $ pip3 install neologdn  
 $ pip3 install numpy  
 $ pip3 install matplotlib  
