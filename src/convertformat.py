@@ -12,6 +12,23 @@ import traceback
 
 import feedparser
 import MeCab
+from pytrends.request import TrendReq
+
+
+def gtrend_get():
+    """
+    Googleトレンドのデータを取得する。
+    """
+    try:
+        pytrend = TrendReq()
+
+        trending_searches_df = pytrend.trending_searches(pn='p4')
+        print(trending_searches_df["title"])
+
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
 
 def word_tokenaize(doc):
     """
@@ -68,14 +85,14 @@ def main():
 
         feedword = getfeedword(input_file)
 
-        wt = []
+        word = []
         for l in feedword:
             wc = word_tokenaize(l)
-            wt.extend(wc)
+            word.extend(wc)
 
-        result = collections.Counter(wt)
+        result = collections.Counter(word)
         for word, cnt in sorted(result.items(),key=lambda x: x[1], reverse=True):
-            print(word, cnt)
+            print(f"{word} : {cnt}")
 
         end_t = time.perf_counter()
         process_time = end_t - start_t
