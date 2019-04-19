@@ -86,13 +86,15 @@ def main():
         feedword = getfeedword(input_file)
 
         word = []
+        p = re.compile('^[0-9]+$')
         for l in feedword:
             wc = word_tokenaize(l)
-            word.extend(wc)
+            o = [i for i in wc if not re.match(p,i)]
+            word.extend(o)
 
         result = collections.Counter(word)
         for word, cnt in sorted(result.items(),key=lambda x: x[1], reverse=True):
-            print(f"{word} : {cnt}")
+            print(word, cnt)
 
         end_t = time.perf_counter()
         process_time = end_t - start_t
