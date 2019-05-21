@@ -15,16 +15,35 @@ import MeCab
 from pytrends.request import TrendReq
 
 
-def gtrend_get():
+def gtrend_get(urls):
     """
     Googleトレンドのデータを取得する。
     """
     try:
-        pytrend = TrendReq()
-
-        trending_searches_df = pytrend.trending_searches(pn='p4')
-        print(trending_searches_df["title"])
-
+        result=[]
+        keys = [
+                 'title','ht_approx_traffic','ht_news_item_title',
+                 'published_parsed'
+               ]
+        feed = feedparser.parse(urls)
+        for x in feed.entries:
+            if x is not None:
+               if hasattr(x, 'title') and \
+                  hasattr(x, 'ht_approx_traffic') and \
+                  hasattr(x, 'ht_news_item_title') and \
+                  hasattr(x, 'published_parsed'):
+                  values = [
+                             x.title,
+                             x.ht_approx_traffic.replace('+',''),
+                             x.ht_news_item_title,
+                             time.strftime('%Y-%m-%d %H:%M:%S', x.published_parsed)
+                           ]
+                  o = dict(zip(keys,values))
+                  result.append(o)
+        if result:
+           return result
+        else:
+            return
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
@@ -78,23 +97,28 @@ def main():
     """
     主処理
     第1引数で入力ファイルを取得し、名詞を抽出してランキングにする。
+    meCabで処理した名詞の中から数値のものを除外する。
     """
     try:
         start_t = time.perf_counter()
-        input_file = sys.argv[1]
+#        input_file = sys.argv[1]
 
-        feedword = getfeedword(input_file)
+        feedurls = 'https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP'
+        r = gtrend_get(feedurls)
+        print(r)
 
-        word = []
-        p = re.compile('^[0-9]+$')
-        for l in feedword:
-            wc = word_tokenaize(l)
-            o = [i for i in wc if not re.match(p,i)]
-            word.extend(o)
-
-        result = collections.Counter(word)
-        for word, cnt in sorted(result.items(),key=lambda x: x[1], reverse=True):
-            print(word, cnt)
+#        feedword = getfeedword(input_file)
+#        wl = 3
+#        word = []
+#        p = re.compile('^[0-9]+$')
+#        for l in feedword:
+#            wc = word_tokenaize(l)
+#            o = [i for i in wc if not re.match(p,i)]
+#            word.extend(o)
+#        result = collections.Counter(word)
+#        for word, cnt in sorted(result.items(),key=lambda x: x[1], reverse=True):
+#            if len(word) > wl:
+#               print(word, cnt)
 
         end_t = time.perf_counter()
         process_time = end_t - start_t

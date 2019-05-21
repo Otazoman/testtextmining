@@ -3,7 +3,6 @@
 import csv
 import collections
 import json
-#from multiprocessing import Pool
 import pprint
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -46,7 +45,10 @@ def rssparse(feedurl):
                   values = [x.title,x.description,x.links[0].href,time.strftime('%Y-%m-%d %H:%M:%S', x.updated_parsed)]
                   o = dict(zip(keys,values))
                   result.append(o)
-        return result
+        if result:
+           return result
+        else:
+            return
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
@@ -64,9 +66,15 @@ def main():
         urls = getfeedurl(input_file)
         size = len(urls)
         print('RSSフィード数:{0}件'.format(size))
-        wk=10
+        wk=20
+        out=[]
+        #マルチスレッドでRSSを取得する
         with ThreadPoolExecutor(max_workers=wk) as executor:
-             out = list(executor.map(rssparse, urls))
+             r = list(executor.map(rssparse, urls))
+        #記事が存在するもののみ抽出
+        #out = fliter(lambda a: a is not None , r)
+        out=[ e for e in r if e]
+        #ファイルに書込 
         with open(output_file,'w') as f:
              f.write(json.dumps(out, indent=2, ensure_ascii=False))
         end_t = time.perf_counter()
