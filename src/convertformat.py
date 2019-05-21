@@ -22,26 +22,23 @@ def gtrend_get(urls):
     try:
         results=[]
         keys = [
-                 'title','ht_approx_traffic','ht_news_item_title',
-                 'published_parsed'
+                 'title','ht_approx_traffic','published_parsed'
                ]
         feed = feedparser.parse(urls)
         for x in feed.entries:
             if x is not None:
                if hasattr(x, 'title') and \
                   hasattr(x, 'ht_approx_traffic') and \
-                  hasattr(x, 'ht_news_item_title') and \
                   hasattr(x, 'published_parsed'):
                   values = [
                              x.title,
                              x.ht_approx_traffic.replace('+','').replace(',',''),
-                             x.ht_news_item_title,
                              time.strftime('%Y-%m-%d %H:%M:%S', x.published_parsed)
                            ]
                   o = dict(zip(keys,values))
                   results.append(o)
         if results:
-           results = sorted(results, key=lambda x:x['ht_approx_traffic'] , reverse=True )
+           results = sorted(results, key=lambda x:x['ht_approx_traffic'],reverse=True)
            return results
         else:
             return
@@ -95,34 +92,59 @@ def getfeedword(input_file):
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
 
+def getnumwords(targetword):
+    """
+    単語数を数えて上位からソートする
+    """
+    try:
+        tw = collections.Counter(targetword)
+        results = []
+        keys = ['word','word_count']
+        for word, cnt in sorted(tw.items(),key=lambda x: x[1], reverse=True):
+            values = [word,cnt]
+            w = dict(zip(keys,values))
+            if w:
+               results.append(w)
+        if results:
+           return results
+        else:
+           return
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
+
+
 def main():
     """
     主処理
-    第1引数で入力ファイルを取得し、名詞を抽出してランキングにする。
-    meCabで処理した名詞の中から数値のものを除外する。
+    第1引数で入力ファイルから名詞を取得する。
+    取得した名詞とGoogleTrendsの検索ワードを比較する。
+　　一致したものをtwitterに投稿する。
+    
     """
     try:
         start_t = time.perf_counter()
-        #input_file = sys.argv[1]
+        input_file = sys.argv[1]
 
         feedurls = 'https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP'
-        r = gtrend_get(feedurls)
-        print(r)
+        gw = gtrend_get(feedurls)
+        print(gw)
 
-#        feedword = getfeedword(input_file)
-#        wl = 3
-#        word = []
-#        p = re.compile('^[0-9]+$')
-#        for l in feedword:
-#            if len(l) >= wl :
-#               wc = word_tokenaize(l)
-#               o = [i for i in wc if not re.match(p,i)]
-#               word.extend(o)
-#
-#        result = collections.Counter(word)
-#        for word, cnt in sorted(result.items(),key=lambda x: x[1], reverse=True):
-#            print(word, cnt)
-#
+        feedword = getfeedword(input_file)
+        wl = 3
+        word = []
+        p = re.compile('^[0-9]+$')
+        for l in feedword:
+            if len(l) >= wl :
+               wc = word_tokenaize(l)
+               o = [i for i in wc if not re.match(p,i)]
+               word.extend(o)
+        
+        fw = getnumwords(word)
+        print(fw)
+
+
         end_t = time.perf_counter()
         process_time = end_t - start_t
         print('処理時間は:{0}秒です。'.format(process_time))
