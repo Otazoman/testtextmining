@@ -20,6 +20,7 @@ CRF++-0.58
 swig  
 cabocha-0.69  
 fonts-ipaexfont  
+nkf
 
 pip  
 mecab-python3  
@@ -32,12 +33,17 @@ scipy
 scikit_learn  
 tensorflow  
 wordcloud  
-install pillow  
+pillow  
+gensim
+wikipedia2vec
+emoji
+
 
 ## Usage
 $ python3 mecabsample.py inputfilename outputname  
 $ python3 wordcloudsample.py inputfilename outputname   
 $ python3 getrssfeed.py feedlistfilename outputfilename  
+$ python3 word2vecsample1.py word
 
 ## Environment Setup
 $ sudo apt-get -y install mecab mecab-ipadic-utf8 libmecab-dev python-mecab  
@@ -72,6 +78,19 @@ $ cd
 $ rm -Rf CRF*  
 $ rm -Rf cabocha*  
 $ sudo apt -y install fonts-ipaexfont  
+$ sudo apt-get -y install nkf
+$ mkdir corpas
+$ cd corpas
+$ curl https://dumps.wikimedia.org/jawiki/latest/jawiki-latest-pages-articles.xml.bz2 -o jawiki-latest-pages-articles.xml.bz2
+$ git clone https://github.com/attardi/wikiextractor
+$ python3 wikiextractor/WikiExtractor.py jawiki-latest-pages-articles.xml.bz2
+$ python3 ../src/datacleaning.py text
+$ cat text/*/* > jawiki.txt
+$ mecab -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd -Owakati jawiki.txt -o data.txt -b 16384
+$ nkf -w --overwrite data.txt
+$ python3 ../src/modelmake.py
+
+
 
 ## Library Install
 $ pip3 install neologdn  
@@ -83,4 +102,8 @@ $ pip3 install scikit_learn
 $ pip3 install tensorflow  
 $ pip3 install wordcloud  
 $ pip3 install pillow  
-$ pip3 install feedparser  
+$ pip3 install feedparser 
+$ pip3 install gensim
+$ pip3 install wikipedia2vec
+$ pip3 install neologdn
+$ pip3 install emoji 
