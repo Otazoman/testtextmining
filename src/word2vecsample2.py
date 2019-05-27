@@ -1,16 +1,40 @@
 from gensim.models import word2vec
+import logging
 import sys
 import time
 
-word = sys.argv[1]
 
-start_t = time.perf_counter()
-
+"""
+http://swdrsker.hatenablog.com/entry/2017/02/23/193137
+"""
 model = word2vec.Word2Vec.load("../corpas/ja_wiki.model")
-results = model.wv.most_similar(positive=[word])
-for result in results:
-    print(result)
 
-end_t = time.perf_counter()
-process_time = end_t - start_t
-print('処理時間は:{0}秒です。'.format(process_time))
+def neighbor_word(posi, nega=[], n=10):
+    count = 1
+    result = model.most_similar(positive = posi, negative = nega, topn = n)
+    for r in result:
+        print(str(count)+" "+str(r[0])+" "+str(r[1]))
+        count += 1
+
+
+def calc(equation):
+    if "+" not in equation or "-" not in equation:
+        neighbor_word([equation])
+    else:
+        posi,nega = [],[]
+        positives = equation.split("+")
+        for positive in positives:
+            negatives = positive.split("-")
+            posi.append(negatives[0])
+            nega = nega + negatives[1:]
+        neighbor_word(posi = posi, nega = nega)
+
+if __name__=="__main__":
+    start_t = time.perf_counter()
+
+    equation = sys.argv[1]
+    calc(equation)
+
+    end_t = time.perf_counter()
+    process_time = end_t - start_t
+    print('処理時間は:{0}秒です。'.format(process_time))
