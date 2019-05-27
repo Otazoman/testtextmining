@@ -84,7 +84,7 @@ def getfeedword(input_file):
                  for j in range(len(df[i])):
                      if df[i] is not None or type(df[i]) is not 'NoneType':
                         t = df[i][j]['title']
-                        s = re.sub('<.*?>', "", df[i][j]['description'])
+                        s = df[i][j]['description']
                         o +=[t,s]
              return o
     except Exception as e:
