@@ -12,10 +12,13 @@ model = word2vec.Word2Vec.load("../corpas/ja_wiki.model")
 def neighbor_word(posi, nega=[], n=10):
     count = 1
     result = model.most_similar(positive = posi, negative = nega, topn = n)
+    print('--------------------------------------')
+    print('NO\t|word\t|distance\t')
+    print('--------------------------------------')
     for r in result:
-        print(str(count)+" "+str(r[0])+" "+str(r[1]))
+        print(str(count)+"\t|"+str(r[0])+"\t|"+str(r[1]))
         count += 1
-
+    print('--------------------------------------')
 
 def calc(equation):
     if "+" not in equation or "-" not in equation:

@@ -136,7 +136,7 @@ def main():
         word = []
         p = re.compile('^[0-9]+$')
         for l in feedword:
-            if len(l) >= wl :
+            if len(l) > wl :
                wc = word_tokenaize(l)
                o = [i for i in wc if not re.match(p,i)]
                word.extend(o)
