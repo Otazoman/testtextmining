@@ -7,10 +7,10 @@ from requests_oauthlib import OAuth1Session
 
 app = Flask(__name__)
 # xxxxxには、取得したランダムなシークレットキーを入力する。
-app.secret_key = xxxxx
+app.secret_key = b""
 
-OAUTH_CONSUMER_KEY = yyyyy
-OAUTH_CONSUMER_SECRET = zzzzz
+OAUTH_CONSUMER_KEY = ''
+OAUTH_CONSUMER_SECRET = ''
 
 TEMPORARY_CREDENTIAL_REQUEST_URL = 'https://www.hatena.com/oauth/initiate'
 RESOURCE_OWNER_AUTHORIZATION_URL = 'https://www.hatena.ne.jp/oauth/authorize'

@@ -66,19 +66,25 @@ def post_hatena(postword):
     """
     try:
         ta = get_authkey('hatena')
-        pprint.pprint(ta) 
+        #pprint.pprint(ta) 
 
         auth = OAuth1(ta['ck'],ta['cs'],ta['at'],ta['ats'])
 
+        pprint.pprint(auth)
+
+
         bookmark_api_url = "http://api.b.hatena.ne.jp/1/my/bookmark"
-        bookmark_url = "https://google.com"
+        bookmark_url = "https://tohonokai.com"
         
-        req = requests.post(bookmark_api_url + "?url=" + bookmark_url, auth=auth)
+        req = requests.post(bookmark_api_url + "?url=" + bookmark_url, 
+                auth=auth)
         
         if req.status_code == 200:
            print('SUCCESS')
         else:
            print("ERROR : %d" % req.status_code)
+           print(req.headers)
+           print(req.text)
 
 
     except Exception as e:
