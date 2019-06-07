@@ -2,12 +2,41 @@ import collections
 import csv
 from operator import itemgetter
 import requests
+import re
 import sys
 import traceback
 
+import emoji
 import matplotlib.pyplot as plt
 import MeCab
+import neologdn
 from wordcloud import WordCloud
+
+
+def strnormaraizer(str):
+    """
+    wikipediaデータの日本語を正規化する
+    """
+    try:
+        s = neologdn.normalize(str)
+        s = re.sub(
+                r'(http|https)://([-\w]+\.)+[-\w]+(/[-\w./?%&=]*)?',
+                "",s
+              )
+        s = re.sub("<.*?>","",s)
+        s = re.sub(r'(\d)([,.])(\d+)', r'\1\3', s)
+        s = re.sub(r'[!-/:-@[-`{-~]', r' ', s)
+        s = re.sub(u'[■-♯]', ' ', s)
+        s = re.sub(r'(\d)([,.])(\d+)', r'\1\3', s)
+        s = re.sub(r'\d+', '0', s)
+        s = s.replace('0','')
+        s = ''.join(['' if c in emoji.UNICODE_EMOJI else c for c in s])
+        return s
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
+
 
 def create_wordcloud(txt,out_file):
     """
@@ -20,7 +49,7 @@ def create_wordcloud(txt,out_file):
         stop_words = [ u'てる', u'いる', u'なる', u'れる', u'する', u'ある', u' こと', u'これ', u'さん', u'して', \
                  u'くれる', u'やる', u'くださる', u'そう', u'せる', u'した',  u'思う',  \
                  u'それ', u'ここ', u'ちゃん', u'くん', u'', u'て',u'に',u'を',u'は',u'の', u'が', u'と', u'た', u'し', u'で', \
-                 u'ない', u'も', u'な', u'い', u'か', u'ので', u'よう', u'']
+                 u'ない', u'も', u'な', u'い', u'か', u'ので', u'よう', u'',u'0',u'こと',u'ん']
         wordcloud = WordCloud(background_color="white",font_path=fpath, width=900, height=500, \
                               stopwords=set(stop_words)).generate(txt)
         wordcloud.to_file(out_file+'.png')
@@ -69,6 +98,7 @@ def main():
         output_file = sys.argv[2]
         print('operation start')
         for line in open(input_file, 'r'):
+            line = strnormaraizer(line)
             r = word_tokenaize(line)
             o.extend(r)
         result = collections.Counter(o)
