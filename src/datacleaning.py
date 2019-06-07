@@ -23,6 +23,7 @@ def strnormaraizer(str):
         s = re.sub(u'[■-♯]', ' ', s)
         s = re.sub(r'(\d)([,.])(\d+)', r'\1\3', s)
         s = re.sub(r'\d+', '0', s)
+        s = s.replace('0','')
         s = ''.join(['' if c in emoji.UNICODE_EMOJI else c for c in s])
         return s
     except Exception as e:
