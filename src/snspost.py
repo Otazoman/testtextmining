@@ -66,15 +66,10 @@ def post_hatena(postword):
     """
     try:
         ta = get_authkey('hatena')
-        #pprint.pprint(ta) 
-
         auth = OAuth1(ta['ck'],ta['cs'],ta['at'],ta['ats'])
 
-        pprint.pprint(auth)
-
-
         bookmark_api_url = "http://api.b.hatena.ne.jp/1/my/bookmark"
-        bookmark_url = "https://tohonokai.com"
+        bookmark_url = "http://google.com"
         
         req = requests.post(bookmark_api_url + "?url=" + bookmark_url, 
                 auth=auth)
