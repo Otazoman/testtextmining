@@ -77,13 +77,13 @@ $ wget -O CRF++-0.58.tar.gz "https://drive.google.com/uc?export=download&id=0B4y
 $ tar xvzf CRF++-0.58.tar.gz  
 $ cd CRF++-0.58  
 $ vim node.cpp  
-------------------------------  
+  
 #include <stdlib.h>  
 #include   
 #include <time.h>	←Added  
 #include "node.h"  
 #include "common.h"  
-------------------------------  
+  
 $ ./configure  
 $ make  
 $ make check  

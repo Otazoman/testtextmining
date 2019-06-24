@@ -177,8 +177,8 @@ def main():
         #post_twitter(content)
         tags = ["IT","Program","インフラ関連"]
         bookmark_url = "https://it.impressbm.co.jp/"
-        post_hatena(content,bookmark_url,tags)
-        #post_blogger(content)
+        #post_hatena(content,bookmark_url,tags)
+        post_blogger(content)
 
     except Exception as e:
         t, v, tb = sys.exc_info()
