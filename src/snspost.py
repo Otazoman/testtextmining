@@ -21,7 +21,7 @@ def get_authkey(snsname):
     """
     try:    
         with open('../config/config.yml', 'r') as yml:
-             config = yaml.load(yml)
+             config = yaml.safe_load(yml)
              if snsname == 'blogger':
                 client_id     = config[snsname]['client_id']
                 client_secret = config[snsname]['client_secret']
@@ -177,8 +177,8 @@ def main():
         #post_twitter(content)
         tags = ["IT","Program","インフラ関連"]
         bookmark_url = "https://it.impressbm.co.jp/"
-        #post_hatena(content,bookmark_url,tags)
-        post_blogger(content)
+        post_hatena(content,bookmark_url,tags)
+        #post_blogger(content)
 
     except Exception as e:
         t, v, tb = sys.exc_info()
