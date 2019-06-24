@@ -46,27 +46,57 @@ $ python3 getrssfeed.py feedlistfilename outputfilename
 $ python3 word2vecsample1.py word
 
 ## Environment Setup
-$ sudo apt-get -y install mecab mecab-ipadic-utf8 libmecab-dev python-mecab  
-$ sudo apt-get -y install python-pip python3-pip  
-$ sudo apt -y install swig  
-$ sudo pip3 install mecab-python3  
+### pythonインストール
+$ sudo apt -y install python-pip python3-pipi  
+$ sudo apt -y install zlib1g-dev libssl-dev libffi-dev jq bzip2 libbz2-dev libreadline-dev libsqlite3-dev jq  
+$ git clone https://github.com/pyenv/pyenv.git ~/.pyenv  
+$ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc  
+$ echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc  
+$ echo 'eval "$(pyenv init -)"' >> ~/.bashrc  
+$ source ~/.bashrc  
+$ pyenv install --list  
+$ pyenv install 3.7.3  
+$ pyenv install 2.7.16  
+$ pyenv global 3.7.3   
+$ pip install --upgrade pip  
+
+### MeCabインストール
+$ sudo apt -y install mecab libmecab-dev mecab-ipadic-utf8 mecab-jumandic-utf8 python-mecab  
+$ sudo apt -y install swig fonts-ipaexfont nkf  
+$ pip install mecab-python3  
+$ git clone https://github.com/neologd/mecab-ipadic-neologd.git
+$ cd mecab-ipadic-neologd  
+$ chmod -R +x bin build diff libexec misc seed   
+$ sudo bin/install-mecab-ipadic-neologd  
+$ echo `mecab-config --dicdir`"/mecab-ipadic-neologd"  
+/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd  
+$ cd ../  
+
+### Cabochaインストール
 $ wget -O CRF++-0.58.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7QVR6VXJ5dWExSTQ"  
 $ tar xvzf CRF++-0.58.tar.gz  
 $ cd CRF++-0.58  
-$ vim node.cpp   
-	#include <stdlib.h>  
-	#include <cmath>  
-	#include <time.h>	←Added  
-	#include "node.h"  
-	#include "common.h"    
+$ vim node.cpp  
+------------------------------  
+#include <stdlib.h>  
+#include   
+#include <time.h>	←Added  
+#include "node.h"  
+#include "common.h"  
+------------------------------  
 $ ./configure  
 $ make  
 $ make check  
 $ sudo make install  
-$ wget "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7SDd1Q1dUQkZQaUU" -O cabocha.tar.bz2  
-$ bzip2 -dc cabocha.tar.bz2 | tar xvf -  
+$ cd ../  
+$ FILE_ID=0B4y35FiV1wh7SDd1Q1dUQkZQaUU  
+$ FILE_NAME=cabocha-0.69.tar.bz2  
+$ curl -sc /tmp/cookie "https://drive.google.com/uc?export=download&id=${FILE_ID}" > /dev/null  
+$ CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"    
+$ curl -Lb /tmp/cookie "https://drive.google.com/uc?export=download&confirm=${CODE}&id=${FILE_ID}" -o ${FILE_NAME}  
+$ bzip2 -dc cabocha-0.69.tar.bz2 | tar xvf -  
 $ cd cabocha-0.69/  
-$ ./configure --with-mecab-config=`which mecab-config` --with-charset=utf8 --enable-utf8-only  
+$ ./configure --with-charset=utf8 --enable-utf8-only --with-mecab-config=/usr/bin/mecab-config  
 $ sudo ldconfig  
 $ make  
 $ make check  
@@ -76,34 +106,19 @@ $ cd python/
 $ sudo python3 setup.py install  
 $ cd  
 $ rm -Rf CRF*  
-$ rm -Rf cabocha*  
-$ sudo apt -y install fonts-ipaexfont  
-$ sudo apt-get -y install nkf  
-$ mkdir corpas  
-$ cd corpas  
-$ curl https://dumps.wikimedia.org/jawiki/latest/jawiki-latest-pages-articles.xml.bz2 -o jawiki-latest-pages-articles.xml.bz2  
-$ git clone https://github.com/attardi/wikiextractor  
-$ python3 wikiextractor/WikiExtractor.py jawiki-latest-pages-articles.xml.bz2  
-$ python3 ../src/datacleaning.py text  
-$ cat text/*/* > jawiki.txt  
-$ mecab -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd -Owakati jawiki.txt -o data.txt -b 16384  
-$ nkf -w --overwrite data.txt  
-$ python3 ../src/modelmake.py  
-
-
+$ sudo rm -Rf cabocha*  
 
 ## Library Install
-$ pip3 install neologdn  
-$ pip3 install numpy  
-$ pip3 install matplotlib  
-$ pip3 install pandas  
-$ pip3 install scipy  
-$ pip3 install scikit_learn  
-$ pip3 install tensorflow  
-$ pip3 install wordcloud  
-$ pip3 install pillow  
-$ pip3 install feedparser  
-$ pip3 install gensim  
-$ pip3 install wikipedia2vec  
-$ pip3 install neologdn  
-$ pip3 install emoji  
+$ pip install --upgrade build  
+$ pip install --upgrade neologdn numpy  
+$ pip install --upgrade matplotlib pandas  
+$ pip install --upgrade scipy scikit_learn   
+$ pip install --upgrade wordcloud pillow feedparser  
+$ pip install --upgrade gensim wikipedia2vec neologdn emoji  
+$ pip install --upgrade tensorflow  
+$ pip install --upgrade requests_oauthlib twitter requests  
+$ pip install --upgrade flask furl Werkzeug Jinja2 oauth2  
+$ pip install --upgrade google-api-python-client gdata  
+$ pip install --upgrade tlslite oauth2client  
+$ pip install --upgrade pyyaml  
+

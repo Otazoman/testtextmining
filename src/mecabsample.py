@@ -3,6 +3,7 @@ import collections
 from operator import itemgetter
 import re
 import sys
+import time
 import traceback
 
 import emoji
@@ -67,6 +68,7 @@ def main():
     word_tokenaizeで解析した単語数を降順で並べ替えて出力する。
     """
     try:
+        start_t = time.perf_counter()
         o = []
         r = []
         csvlist = []
@@ -83,6 +85,9 @@ def main():
             writer.writerow([word,cnt])
             print(word, cnt)
         f.close
+        end_t = time.perf_counter()
+        process_time = end_t - start_t
+        print('処理時間は:{0}秒です。'.format(process_time))
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))

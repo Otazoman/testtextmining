@@ -4,6 +4,7 @@ from operator import itemgetter
 import requests
 import re
 import sys
+import time
 import traceback
 
 import emoji
@@ -91,6 +92,7 @@ def main():
     加工データは単語数を降順でソートしたCSVとWordCloudのpngファイルとして出力さ れる。
     """
     try:
+        start_t = time.perf_counter()
         o = []
         r = []
         csvlist = []
@@ -109,7 +111,10 @@ def main():
         for word, cnt in sorted(result.items(),key=lambda x: x[1], reverse=True):
             writer.writerow([word,cnt])
         f.close
-        print('operation end')
+
+        end_t = time.perf_counter()
+        process_time = end_t - start_t
+        print('処理時間は:{0}秒です。'.format(process_time))
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
