@@ -54,11 +54,6 @@ def post_blogger(postcontent):
     """
     try:
         ta = get_authkey('blogger')
-        #print(ta['ci'])
-        #print(ta['cs'])
-        #print(ta['sc'])
-        #print(ta['ru'])
-
         flow = OAuth2WebServerFlow(client_id=ta['ci'],
                                     client_secret=ta['cs'],
                                     scope=ta['sc'],
@@ -67,38 +62,27 @@ def post_blogger(postcontent):
         credentials = storage.get()
         blogid = ta['pb']
 
-        #print("aaaaaa")
-
-
         if credentials is None or credentials.invalid:
-           auth_uri = flow.step1_get_authorize_url()
-           #print(auth_uri)
-           #auth_code = input('Enter the auth code: ')
-           #credentials = flow.step2_exchange(auth_code)
-           #storage.put(credentials)
            credentials = tools.run_flow(flow, storage)
-           http = credentials.authorize(httplib2.Http())
-           service = build('blogger', 'v3', http=http)
-           posts = service.posts()
+        
+        http = credentials.authorize(http = httplib2.Http())
+        service = build('blogger', 'v3', http=http)
+        posts = service.posts()
 
-           body = {
-                     "kind": "blogger#post",
-                     "id": blogid,
-                     "title": "POSTED_" + postcontent,
-                     "content":"<div>" + postcontent + "</div>"
-                  }
-           insert = posts.insert(blogId=blogid, body=body)
-           posts_doc = insert.execute()
-           
-           if post_doc.status_code == 200:
-              print('SUCCESS')
-           else:
-              print("ERROR : %d" % post_doc.status_code)
-              print(post_doc.headers)
-              print(post_doc.text)
-           
-           #return post_doc
-          
+        body = {
+                  "kind": "blogger#post",
+                  "id": blogid,
+                  "title": "POSTED_" + postcontent,
+                  "content":"<div>" + postcontent + "</div>"
+              }
+        insert = posts.insert(blogId=blogid, body=body)
+        posts_doc = insert.execute()
+        
+        if posts_doc['status'] == 'LIVE':
+            print('SUCCESS')
+        else:
+            print("ERROR : %d" % post_doc)
+
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
@@ -177,7 +161,7 @@ def main():
         #post_twitter(content)
         tags = ["IT","Program","インフラ関連"]
         bookmark_url = "https://it.impressbm.co.jp/"
-        #post_hatena(content,bookmark_url,tags)
+        post_hatena(content,bookmark_url,tags)
         post_blogger(content)
 
     except Exception as e:
