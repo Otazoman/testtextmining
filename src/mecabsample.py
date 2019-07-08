@@ -1,39 +1,14 @@
+#!/usr/bin/env python3
+# coding: utf-8
 import csv
 import collections
 from operator import itemgetter
-import re
 import sys
 import time
 import traceback
 
-import emoji
 import MeCab
-import neologdn
-
-def strnormaraizer(str):
-    """
-    wikipediaデータの日本語を正規化する
-    """
-    try:
-        s = neologdn.normalize(str)
-        s = re.sub(
-                r'(http|https)://([-\w]+\.)+[-\w]+(/[-\w./?%&=]*)?',
-                "",s
-              )
-        s = re.sub("<.*?>","",s)
-        s = re.sub(r'(\d)([,.])(\d+)', r'\1\3', s)
-        s = re.sub(r'[!-/:-@[-`{-~]', r' ', s)
-        s = re.sub(u'[■-♯]', ' ', s)
-        s = re.sub(r'(\d)([,.])(\d+)', r'\1\3', s)
-        s = re.sub(r'\d+', '0', s)
-        s = s.replace('0','')
-        s = ''.join(['' if c in emoji.UNICODE_EMOJI else c for c in s])
-        return s
-    except Exception as e:
-        t, v, tb = sys.exc_info()
-        print(traceback.format_exception(t,v,tb))
-        print(traceback.format_tb(e.__traceback__))
-
+import japanesenormaraizer as jn
 
 def word_tokenaize(doc):
     """
@@ -60,7 +35,6 @@ def word_tokenaize(doc):
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
 
-
 def main():
     """
     主処理
@@ -75,7 +49,7 @@ def main():
         input_file = sys.argv[1]
         output_file = sys.argv[2]
         for line in open(input_file, 'r'):
-            line = strnormaraizer(line)
+            line = jn.strnormaraizer(line)
             r = word_tokenaize(line)
             o.extend(r)
         result = collections.Counter(o)

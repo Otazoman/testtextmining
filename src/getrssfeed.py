@@ -4,16 +4,13 @@ import csv
 import collections
 import json
 import pprint
-import re
 import sys
 from concurrent.futures import ThreadPoolExecutor
 import time
 import traceback
 
-import emoji
 import feedparser
-import neologdn
-
+import japanesenormaraizer as jn
 
 def getfeedurl(infile):
     """
@@ -33,11 +30,7 @@ def getfeedurl(infile):
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
 
-
-def strnormaraizer(str):
-    """
-    wikipediaデータの日本語を正規化する
-    """
+"""def strnormaraizer(str):
     try:
         s = neologdn.normalize(str)
         s = re.sub(
@@ -57,7 +50,7 @@ def strnormaraizer(str):
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
-
+"""
 
 def rssparse(feedurl,name,category):
     """
@@ -75,8 +68,8 @@ def rssparse(feedurl,name,category):
                   hasattr(x, 'updated_parsed'):
                          n = name
                          c = category
-                         t = strnormaraizer(x.title)
-                         d = strnormaraizer(x.description)
+                         t = jn.strnormaraizer(x.title)
+                         d = jn.strnormaraizer(x.description)
                          l = x.links[0].href
                          u = time.strftime('%Y-%m-%d %H:%M:%S',x.updated_parsed)
                          values = [n,c,t,d,l,u]
@@ -90,7 +83,6 @@ def rssparse(feedurl,name,category):
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
-
 
 def main():
     """
