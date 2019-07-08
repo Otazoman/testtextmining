@@ -11,11 +11,10 @@ import time
 import traceback
 
 import feedparser
-#import MeCab
 #from pytrends.request import TrendReq
 import mecaboperate as mec
 
-def gtrend_get(urls):
+def gtrend_getfeed(urls):
     """
     Googleトレンドのデータを取得する。
     """
@@ -46,27 +45,6 @@ def gtrend_get(urls):
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
-
-
-"""def word_tokenaize(doc):
-    try:
-        tagger = MeCab.Tagger(" -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd")
-        tagger.parse("")
-        node = tagger.parse(doc)
-        results = []
-        lines=[]
-        lines=node.split('\n')
-        for item in lines:
-           cw = item.split('\t')[0]
-           if len(item) > 5:
-              ps = item.split('\t')[1].split(',')[0]
-              if  ps == '名詞':
-                  results.append(cw)
-        return results
-    except Exception as e:
-        t, v, tb = sys.exc_info()
-        print(traceback.format_exception(t,v,tb))
-        print(traceback.format_tb(e.__traceback__))"""
 
 def getfeedword(input_file):
     """
@@ -114,17 +92,16 @@ def getnumwords(targetword):
 def main():
     """
     主処理
-    第1引数で入力ファイルから名詞を取得する。
-    取得した名詞とGoogleTrendsの検索ワードを比較する。
-　　一致したものをtwitterに投稿する。
     
     """
     try:
         start_t = time.perf_counter()
-        input_file = sys.argv[1]
 
         trendsurls = 'https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP'
-        gw = gtrend_get(trendsurls)
+        input_file = sys.argv[1]
+
+
+        gw = gtrend_getfeed(trendsurls)
         print(gw)
 
         feedword = getfeedword(input_file)
