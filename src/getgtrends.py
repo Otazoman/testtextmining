@@ -11,12 +11,15 @@ import time
 import traceback
 
 import feedparser
-#from pytrends.request import TrendReq
+import pandas as pd
+from pandas import Series, DataFrame
+from pytrends.request import TrendReq
+
 import mecaboperate as mec
 
 def gtrend_getfeed(urls):
     """
-    Googleトレンドのデータを取得する。
+    GoogleトレンドのRSSフィードを取得する。
     """
     try:
         results=[]
@@ -41,6 +44,28 @@ def gtrend_getfeed(urls):
            return results
         else:
             return
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
+
+def gtrend_getvalue(kw_list,output_file,timeframe):
+    """
+    ライブラリを使用してGoogleTrendsからデータを取得する。
+    #pytrends ref https://pypi.org/project/pytrends/#interest-by-region
+    """
+    try:
+        pytrends = TrendReq(hl='ja-JP', tz=360)
+        pytrends.build_payload(kw_list, cat=0, timeframe=timeframe, geo='JP', gprop='')
+        trendsdata = pytrends.related_queries()
+        data = pd.DataFrame(trendsdata)
+        data.to_csv(output_file +".csv")
+
+        #ts = pytrends.trending_searches(pn='united_states')
+        trendsword = pytrends.trending_searches(pn='japan')
+        data = pd.DataFrame(trendsword)
+        data.to_csv(output_file +"_word.csv")
+
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
@@ -97,12 +122,20 @@ def main():
     try:
         start_t = time.perf_counter()
 
-        trendsurls = 'https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP'
         input_file = sys.argv[1]
+        output_file = sys.argv[2]
 
+        #trendsurls = 'https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP'
+        #gw = gtrend_getfeed(trendsurls)
+        #print(gw)
 
-        gw = gtrend_getfeed(trendsurls)
-        print(gw)
+        #kw = ["Java","Python","JavaScript"]
+        kw = ["医療保険","火災保険","自動車保険"]
+        #tframe='today 5-y'
+        tframe='2018-01-01 2018-12-31'
+        
+        #GoogleTorends
+        gtrend_getvalue(kw,output_file,tframe)
 
         feedword = getfeedword(input_file)
         wl = 3
@@ -115,7 +148,7 @@ def main():
                word.extend(o)
         
         fw = getnumwords(word)
-        print(fw)
+        #print(fw)
 
 
         end_t = time.perf_counter()
