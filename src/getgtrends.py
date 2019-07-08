@@ -11,9 +11,9 @@ import time
 import traceback
 
 import feedparser
-import MeCab
-from pytrends.request import TrendReq
-
+#import MeCab
+#from pytrends.request import TrendReq
+import mecaboperate as mec
 
 def gtrend_get(urls):
     """
@@ -48,11 +48,7 @@ def gtrend_get(urls):
         print(traceback.format_tb(e.__traceback__))
 
 
-def word_tokenaize(doc):
-    """
-    Mecabを使用して与えられたテキストを解析する
-    名詞のみを取り出してリストに格納する
-    """
+"""def word_tokenaize(doc):
     try:
         tagger = MeCab.Tagger(" -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd")
         tagger.parse("")
@@ -70,7 +66,7 @@ def word_tokenaize(doc):
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
-        print(traceback.format_tb(e.__traceback__))
+        print(traceback.format_tb(e.__traceback__))"""
 
 def getfeedword(input_file):
     """
@@ -127,8 +123,8 @@ def main():
         start_t = time.perf_counter()
         input_file = sys.argv[1]
 
-        feedurls = 'https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP'
-        gw = gtrend_get(feedurls)
+        trendsurls = 'https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP'
+        gw = gtrend_get(trendsurls)
         print(gw)
 
         feedword = getfeedword(input_file)
@@ -137,7 +133,7 @@ def main():
         p = re.compile('^[0-9]+$')
         for l in feedword:
             if len(l) > wl :
-               wc = word_tokenaize(l)
+               wc = mec.word_tokenaize(l)
                o = [i for i in wc if not re.match(p,i)]
                word.extend(o)
         

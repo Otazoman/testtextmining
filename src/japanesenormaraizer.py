@@ -27,5 +27,3 @@ def strnormaraizer(str):
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
-
-#if __name__ == '__main__':
