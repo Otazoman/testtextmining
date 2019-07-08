@@ -25,6 +25,7 @@ def getfeedurl(infile):
         with open(infile, "r") as f:
             data = csv.reader(f)
             h = next(data)
+
             result =[ r for r in data if r ]
         return result
     except Exception as e:
@@ -58,13 +59,13 @@ def strnormaraizer(str):
         print(traceback.format_tb(e.__traceback__))
 
 
-def rssparse(feedurl):
+def rssparse(feedurl,name,category):
     """
     RSSフィードからタイトルと概要と更新日時を取得する。
     """
     try:
         result=[]
-        keys = ['title','description','link','updated']
+        keys = ['name','category','title','description','link','updated']
         feed = feedparser.parse(feedurl, response_headers={"content-type": "text/xml; charset=utf-8"})
         for x in feed.entries:
             if x is not None:
@@ -72,11 +73,13 @@ def rssparse(feedurl):
                   hasattr(x, 'description') and \
                   hasattr(x, 'href') and \
                   hasattr(x, 'updated_parsed'):
+                         n = name
+                         c = category
                          t = strnormaraizer(x.title)
                          d = strnormaraizer(x.description)
                          l = x.links[0].href
                          u = time.strftime('%Y-%m-%d %H:%M:%S',x.updated_parsed)
-                         values = [t,d,l,u]
+                         values = [n,c,t,d,l,u]
                          o = dict(zip(keys,values))
                          result.append(o)
         if result:
@@ -92,9 +95,8 @@ def rssparse(feedurl):
 def main():
     """
     主処理
-    第1引数から入力ファイル、第2引数から出力ファイルを取得する
-    使用例：$ python getrssfeed.py feedurl.csv output.json
-    
+    RSSフィードCSVを読込んでその内容をJSONで出力する。
+
     """
     try:
         start_t = time.perf_counter()
@@ -107,20 +109,22 @@ def main():
         print('Please input outputfilename')
         output_file = input('>>')
         if not output_file:
-           print('outputfilename auto generate')
-           output_file = input_file + ".txt"
+           output_file = input_file + ".json"
+           print('outputfilename auto generate {0}'.format(output_file))
+        else:
+            output_file = output_file +".json"
 
         feedlists = getfeedurl(input_file)
         size = len(feedlists)
         print('RSSフィード数:{0}件'.format(size))
-        titles = [x[0] for x in feedlists]
+        names = [x[0] for x in feedlists]
         urls = [x[1] for x in feedlists]
         categories = [x[2] for x in feedlists]
         wk=20
         out=[]
         #マルチスレッドでRSSを取得する
         with ThreadPoolExecutor(max_workers=wk) as executor:
-             r = list(executor.map(rssparse, urls))
+             r = list(executor.map(rssparse, urls,names,categories))
         out=[ e for e in r if e]
         #ファイルに書込
         with open(output_file,'w') as f:
