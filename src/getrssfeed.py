@@ -98,8 +98,21 @@ def main():
     """
     try:
         start_t = time.perf_counter()
-        input_file = sys.argv[1]
-        output_file= sys.argv[2]
+        #input_file = sys.argv[1]
+        #output_file= sys.argv[2]
+        #args
+        print('Please input inputfilename')
+        input_file = input('>>')
+        if not input_file:
+           print("Please input inputfilename!!")
+           sys.exit()
+
+        print('Please input outputfilename')
+        output_file = input('>>')
+        if not output_file:
+           print('outputfilename auto generate')
+           output_file = input_file + ".txt"
+
         urls = getfeedurl(input_file)
         size = len(urls)
         print('RSSフィード数:{0}件'.format(size))
