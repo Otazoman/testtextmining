@@ -17,15 +17,15 @@ import neologdn
 
 def getfeedurl(infile):
     """
-    CSVファイルからフィード一覧を取得する
+    CSVファイルからフィードURL、カテゴリ、タイトル一覧を取得する
 
     """
     try:
-        result=[]
-        with open(infile, newline = "") as f:
-            for r in csv.reader(f):
-                result.append(r[1])
-        del result[0]
+        result=[[]]
+        with open(infile, "r") as f:
+            data = csv.reader(f)
+            h = next(data)
+            result =[ r for r in data if r ]
         return result
     except Exception as e:
         t, v, tb = sys.exc_info()
@@ -98,9 +98,6 @@ def main():
     """
     try:
         start_t = time.perf_counter()
-        #input_file = sys.argv[1]
-        #output_file= sys.argv[2]
-        #args
         print('Please input inputfilename')
         input_file = input('>>')
         if not input_file:
@@ -113,16 +110,17 @@ def main():
            print('outputfilename auto generate')
            output_file = input_file + ".txt"
 
-        urls = getfeedurl(input_file)
-        size = len(urls)
+        feedlists = getfeedurl(input_file)
+        size = len(feedlists)
         print('RSSフィード数:{0}件'.format(size))
+        titles = [x[0] for x in feedlists]
+        urls = [x[1] for x in feedlists]
+        categories = [x[2] for x in feedlists]
         wk=20
         out=[]
         #マルチスレッドでRSSを取得する
         with ThreadPoolExecutor(max_workers=wk) as executor:
              r = list(executor.map(rssparse, urls))
-        #記事が存在するもののみ抽出
-        #out = fliter(lambda a: a is not None , r)
         out=[ e for e in r if e]
         #ファイルに書込
         with open(output_file,'w') as f:
@@ -130,6 +128,7 @@ def main():
         end_t = time.perf_counter()
         process_time = end_t - start_t
         print('処理時間は:{0}秒です。'.format(process_time))
+        
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
