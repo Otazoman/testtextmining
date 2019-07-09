@@ -57,14 +57,27 @@ def gtrend_getvalue(kw_list,output_file,timeframe):
     try:
         pytrends = TrendReq(hl='ja-JP', tz=360)
         pytrends.build_payload(kw_list, cat=0, timeframe=timeframe, geo='JP', gprop='')
+        #関連キーワード
         trendsdata = pytrends.related_queries()
         data = pd.DataFrame(trendsdata)
-        data.to_csv(output_file +".csv")
+        data.to_csv(output_file +"_query.csv")
+        #関連トピック
+        trendsdata = pytrends.related_topics()
+        data = pd.DataFrame(trendsdata)
+        data.to_csv(output_file +"_topics.csv")
+        #地域別の関心
+        trendsdata = pytrends.interest_by_region(resolution='REGION', inc_low_vol=True, inc_geo_code=False)
+        data = pd.DataFrame(trendsdata)
+        data.to_csv(output_file +"_region.csv")
+        #時系列
+        trendsdata = pytrends.interest_over_time()
+        data = pd.DataFrame(trendsdata)
+        data.to_csv(output_file +"_overtime.csv")
 
         #ts = pytrends.trending_searches(pn='united_states')
         trendsword = pytrends.trending_searches(pn='japan')
         data = pd.DataFrame(trendsword)
-        data.to_csv(output_file +"_word.csv")
+        data.to_csv("trend_word.csv")
 
     except Exception as e:
         t, v, tb = sys.exc_info()
@@ -129,8 +142,7 @@ def main():
         #gw = gtrend_getfeed(trendsurls)
         #print(gw)
 
-        #kw = ["Java","Python","JavaScript"]
-        kw = ["医療保険","火災保険","自動車保険"]
+        kw = ["Java","Python","JavaScript"]
         #tframe='today 5-y'
         tframe='2018-01-01 2018-12-31'
         
