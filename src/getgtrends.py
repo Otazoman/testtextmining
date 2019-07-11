@@ -17,6 +17,27 @@ from pytrends.request import TrendReq
 
 import mecaboperate as mec
 
+def search(arg, cond):
+    """
+    jsonを解析する
+    """
+    res =[]
+    if cond(arg):
+        res.append(arg.values())
+    if isinstance(arg, list):
+        for item in arg:
+            res += search(item, cond)
+    elif isinstance(arg, dict):
+        for value in arg.values():
+            res += search(value, cond)
+    return res
+def has_star_key(arg):
+    if isinstance(arg, dict):
+        return arg.keys() == {'top', 'rising'}
+def get_star(arg):
+    return search(arg, has_star_key)
+
+
 def gtrend_getfeed(urls):
     """
     GoogleトレンドのRSSフィードを取得する。
@@ -54,30 +75,45 @@ def gtrend_getvalue(kw_list,output_file,timeframe):
     ライブラリを使用してGoogleTrendsからデータを取得する。
     #pytrends ref https://pypi.org/project/pytrends/#interest-by-region
     """
+    #ファイル出力
+    def exportdata(trendsdata,output_file_name):
+        #data = pd.DataFrame(trendsdata)
+        #for td in trendsdata.values(): 
+        #    o=td.values()
+        #o = [i for i in trendsdata.values()]
+        o = get_star(trendsdata)
+        print(len(o))
+
+
+        #with open(output_file_name,'w') as f:
+        #  for ele in o.value:
+        #      f.write(ele+'\n')
+        #     f.write(o)
+        #o.to_csv(output_file_name)
     try:
         pytrends = TrendReq(hl='ja-JP', tz=360)
         pytrends.build_payload(kw_list, cat=0, timeframe=timeframe, geo='JP', gprop='')
         #関連キーワード
         trendsdata = pytrends.related_queries()
-        data = pd.DataFrame(trendsdata)
-        data.to_csv(output_file +"_query.csv")
-        #関連トピック
+        o = output_file +"_query.csv"
+        f = exportdata(trendsdata,o)
+        """#関連トピック
         trendsdata = pytrends.related_topics()
-        data = pd.DataFrame(trendsdata)
-        data.to_csv(output_file +"_topics.csv")
+        o = output_file +"_topics.csv"
+        f = exportdata(trendsdata,o)
         #地域別の関心
         trendsdata = pytrends.interest_by_region(resolution='REGION', inc_low_vol=True, inc_geo_code=False)
-        data = pd.DataFrame(trendsdata)
-        data.to_csv(output_file +"_region.csv")
+        o = output_file +"_region.csv"
+        f = exportdata(trendsdata,o)
         #時系列
         trendsdata = pytrends.interest_over_time()
-        data = pd.DataFrame(trendsdata)
-        data.to_csv(output_file +"_overtime.csv")
-
-        #ts = pytrends.trending_searches(pn='united_states')
-        trendsword = pytrends.trending_searches(pn='japan')
-        data = pd.DataFrame(trendsword)
-        data.to_csv("trend_word.csv")
+        o = output_file +"_overtime.csv"
+        f = exportdata(trendsdata,o)
+        #注目キーワード
+        #trendsword = pytrends.trending_searches(pn='united_states') #アメリカ
+        trendsword = pytrends.trending_searches(pn='japan') #日本
+        o = "trend_word.csv"
+        f = exportdata(trendsword,o) """
 
     except Exception as e:
         t, v, tb = sys.exc_info()
@@ -144,7 +180,7 @@ def main():
 
         kw = ["Java","Python","JavaScript"]
         #tframe='today 5-y'
-        tframe='2018-01-01 2018-12-31'
+        tframe='2018-01-01 2018-6-30'
         
         #GoogleTorends
         gtrend_getvalue(kw,output_file,tframe)
