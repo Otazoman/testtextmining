@@ -120,5 +120,7 @@ $ pip install --upgrade requests_oauthlib twitter requests
 $ pip install --upgrade flask furl Werkzeug Jinja2 oauth2  
 $ pip install --upgrade google-api-python-client gdata  
 $ pip install --upgrade tlslite oauth2client  
-$ pip install --upgrade pyyaml  
+$ pip install --upgrade pyyaml   
+$ pip install --upgrade pytrends  
+$ pip install --upgrade xlwt openpyxl  
 
