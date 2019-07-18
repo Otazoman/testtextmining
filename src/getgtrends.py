@@ -17,6 +17,7 @@ from pandas import Series, DataFrame
 from pytrends.request import TrendReq
 import mecaboperate as mec
 import openpyxl as opx
+import xlsxwriter
 
 
 def gtrend_getfeed(urls):
@@ -58,41 +59,34 @@ def gtrend_getvalue(kw_list,output_file,timeframe):
     """
     def fileexport(output_data,output_file_name,sheetname,mode):
         #指定パラメータに応じて処理
+        #20190716TODO: EXCEL出力時にシートを分けての保存がうまくいかないのでその部分を修正
         if mode == 'excel':
             o = output_file_name +".xlsx"
-            ef = os.path.isfile(o)
-            if ef:
-                """with pd.ExcelWriter(o) as writer:
-                    writer.book = opx.load_workbook(o)
-                    output_data.to_excel(writer, sheet_name=sheetname)"""
-
-                writer=opx.load_workbook(o)
-                #writer=opx.ExcelWriter(o, engine='openpyxl')
-                #writer.book = wb
-                writer.sheets=dict((ws.title, ws) for ws in writer.worksheets)
-                output_data.to_excel(writer, sheet_name=sheetname)
-                writer.write(o)
+            xlsf = os.path.isfile(o)
+            if xlsf:
+                with pd.ExcelWriter(o,engine="openpyxl", mode="a") as writer:
+                    output_data.to_excel(writer, sheet_name=sheetname)
             else:
-                output_data.to_excel(o,sheet_name=sheetname)
+                with pd.ExcelWriter(o,engine="openpyxl") as writer:
+                    output_data.to_excel(writer, sheet_name=sheetname)
         elif mode == 'csv':
              output_data.to_csv(output_file_name + "_" + sheetname + ".csv")
         else:
              print(output_data)
 
     def exportdata(trendsdata,output_file_name,sheetname,data_type):
-        #ファイル出力
+        #ファイル出力 戻されるDataFrameタイプに応じてデータ加工方法を変える
         fm = 'excel'
         if data_type == 1:
-            #データ加工：戻されるDataFrameタイプに応じて処理を変える
             data = [i for i in trendsdata.values()]
             for d1 in data:
                 dictval = d1.values()
-            for pdf in dictval:
-                o = pdf
+            for pandasdf in dictval:
+                o = pandasdf
                 fileexport(o,output_file_name,sheetname,fm)
         else:
-                o = trendsdata
-                fileexport(o,output_file_name,sheetname,fm)
+            o = trendsdata
+            fileexport(o,output_file_name,sheetname,fm)
 
     try:
         pytrends = TrendReq(hl='ja-JP', tz=360)

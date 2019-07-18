@@ -122,5 +122,5 @@ $ pip install --upgrade google-api-python-client gdata
 $ pip install --upgrade tlslite oauth2client  
 $ pip install --upgrade pyyaml   
 $ pip install --upgrade pytrends  
-$ pip install --upgrade xlwt openpyxl  
+$ pip install --upgrade xlwt openpyxl xlsxwriter   
 
