@@ -17,7 +17,6 @@ from pandas import Series, DataFrame
 from pytrends.request import TrendReq
 import mecaboperate as mec
 import openpyxl as opx
-import xlsxwriter
 
 
 def gtrend_getfeed(urls):
@@ -57,9 +56,79 @@ def gtrend_getvalue(kw_list,output_file,timeframe):
     ライブラリを使用してGoogleTrendsからデータを取得する。
     #pytrends ref https://pypi.org/project/pytrends/#interest-by-region
     """
-    def fileexport(output_data,output_file_name,sheetname,mode):
-        #指定パラメータに応じて処理
-        #20190716TODO: EXCEL出力時にシートを分けての保存がうまくいかないのでその部分を修正
+    try:
+        sp = kw_list[0]
+        pytrends = TrendReq(hl='ja-JP', tz=360)
+        pytrends.build_payload(kw_list, cat=0, timeframe=timeframe, geo='JP', gprop='')
+        #関連キーワード
+        trendsdata = pytrends.related_queries()
+        o = output_file
+        s = sp + 'query'
+        exportdata(trendsdata,o,s,1)
+        #関連トピック
+        trendsdata = pytrends.related_topics()
+        s = sp + 'topic'
+        exportdata(trendsdata,o,s,1)
+        #地域別の関心
+        trendsdata = pytrends.interest_by_region(resolution='REGION', inc_low_vol=True, inc_geo_code=False)
+        s = sp + 'region'
+        exportdata(trendsdata,o,s,0)
+        #時系列
+        trendsdata = pytrends.interest_over_time()
+        s = sp + 'overtime'
+        exportdata(trendsdata,o,s,0)
+        #サジェスト　
+        trendsdata = pytrends.suggestions(sp)
+        s = sp + 'suggestions'
+        suggest_to_excel(trendsdata,o,s)
+        #print(f)
+
+        #注目キーワード
+        #trendsword = pytrends.trending_searches(pn='united_states') #アメリカ
+        #trendsword = pytrends.trending_searches(pn='japan') #日本
+        #s = "trendword"
+        #f = exportdata(trendsword,o,s,0)
+
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
+
+def suggest_to_excel(trendsdata,output_file_name,sheetname):
+    """
+    サジェストをEXCELに書込み
+    """
+    #TODO EXCELにシートを追記してサジェスト内容を追記
+    try:
+        wb = opx.Workbook()
+        ws = wb.create_sheet(sheetname)
+        results=[]
+        i = 0
+        for sw in trendsdata:
+            if sw :
+               r = sw['title']
+               if r is not None:
+                    s = 'A' + str(i+1)
+                    ws[s] = r
+        
+        wb.save(output_file_name + ".xlsx")
+
+
+        #return results
+
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
+
+
+
+
+def fileexport(output_data,output_file_name,sheetname,mode):
+    """
+    モードを指定して出力ファイルを切替
+    """
+    try:
         if mode == 'excel':
             o = output_file_name +".xlsx"
             xlsf = os.path.isfile(o)
@@ -70,54 +139,54 @@ def gtrend_getvalue(kw_list,output_file,timeframe):
                 with pd.ExcelWriter(o,engine="openpyxl") as writer:
                     output_data.to_excel(writer, sheet_name=sheetname)
         elif mode == 'csv':
-             output_data.to_csv(output_file_name + "_" + sheetname + ".csv")
+            output_data.to_csv(output_file_name + "_" + sheetname + ".csv")
         else:
-             print(output_data)
+            print(output_data)
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
 
-    def exportdata(trendsdata,output_file_name,sheetname,data_type):
-        #ファイル出力 戻されるDataFrameタイプに応じてデータ加工方法を変える
-        fm = 'excel'
+def exportdata(trendsdata,output_file_name,sheetname,data_type):
+    """
+    ファイル出力
+    """
+    try:
+        fm = 'print'
         if data_type == 1:
             data = [i for i in trendsdata.values()]
             for d1 in data:
                 dictval = d1.values()
             for pandasdf in dictval:
                 o = pandasdf
-                fileexport(o,output_file_name,sheetname,fm)
+                if o is not None:
+                   if not o.empty: 
+                      fileexport(o,output_file_name,sheetname,fm)
         else:
             o = trendsdata
             fileexport(o,output_file_name,sheetname,fm)
-
-    try:
-        pytrends = TrendReq(hl='ja-JP', tz=360)
-        pytrends.build_payload(kw_list, cat=0, timeframe=timeframe, geo='JP', gprop='')
-        #関連キーワード
-        trendsdata = pytrends.related_queries()
-        o = output_file
-        s = 'query'
-        f = exportdata(trendsdata,o,s,1)
-        #関連トピック
-        trendsdata = pytrends.related_topics()
-        s = 'topic'
-        f = exportdata(trendsdata,o,s,1)
-        #地域別の関心
-        trendsdata = pytrends.interest_by_region(resolution='REGION', inc_low_vol=True, inc_geo_code=False)
-        s = 'region'
-        f = exportdata(trendsdata,o,s,0)
-        #時系列
-        trendsdata = pytrends.interest_over_time()
-        s = 'overtime'
-        f = exportdata(trendsdata,o,s,0)
-        #注目キーワード
-        #trendsword = pytrends.trending_searches(pn='united_states') #アメリカ
-        trendsword = pytrends.trending_searches(pn='japan') #日本
-        s = "trendword"
-        f = exportdata(trendsword,o,s,0)
-
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
+
+def importfile(input_file):
+    """
+    ファイルから検索キーワードを取得
+
+    """
+    try:
+        result=[[]]
+        with open(input_file, "r") as f:
+            data = csv.reader(f)
+            result =[ r for r in data if r ]
+        return result
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
+
+
 
 def getfeedword(input_file):
     """
@@ -177,16 +246,18 @@ def main():
         #gw = gtrend_getfeed(trendsurls)
         #print(gw)
 
-        #kw = ["Java","Python","JavaScript"]
-        #kw = ["医療保険","火災保険","自動車保険"]
-        kw = ["医療保険"]
-        #tframe='today 5-y'
-        tframe='2018-01-01 2018-6-30'
-        
-        #GoogleTorends
-        gtrend_getvalue(kw,output_file,tframe)
+        #キーワードファイル取得
+        kw_lists = importfile(input_file)
+        print(kw_lists)
+        for kw in kw_lists:
+            if kw:
+                #tframe='today 5-y'
+                tframe='2018-01-01 2018-12-31'
+                #5秒待機してからGoogleTorends結果取得
+                time.sleep(5)
+                gtrend_getvalue(kw,output_file,tframe)
 
-        feedword = getfeedword(input_file)
+        """feedword = getfeedword(input_file)
         wl = 3
         word = []
         p = re.compile('^[0-9]+$')
@@ -197,7 +268,7 @@ def main():
                word.extend(o)
         
         fw = getnumwords(word)
-        #print(fw)
+        #print(fw)"""
 
 
         end_t = time.perf_counter()
