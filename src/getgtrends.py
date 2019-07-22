@@ -81,7 +81,6 @@ def gtrend_getvalue(kw_list,output_file,timeframe):
         trendsdata = pytrends.suggestions(sp)
         s = sp + 'suggestions'
         suggest_to_excel(trendsdata,o,s)
-        #print(f)
 
         #注目キーワード
         #trendsword = pytrends.trending_searches(pn='united_states') #アメリカ
@@ -100,29 +99,22 @@ def suggest_to_excel(trendsdata,output_file_name,sheetname):
     """
     #TODO EXCELにシートを追記してサジェスト内容を追記
     try:
-        wb = opx.Workbook()
+        o = output_file_name + ".xlsx"
+        wb = opx.load_workbook(o)
         ws = wb.create_sheet(sheetname)
-        results=[]
         i = 0
         for sw in trendsdata:
             if sw :
                r = sw['title']
                if r is not None:
-                    s = 'A' + str(i+1)
-                    ws[s] = r
-        
-        wb.save(output_file_name + ".xlsx")
-
-
-        #return results
-
+                  s = 'A' + str(i+1)
+                  ws[s] = r
+                  i+=1
+        wb.save(o)
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
-
-
-
 
 def fileexport(output_data,output_file_name,sheetname,mode):
     """
@@ -152,7 +144,7 @@ def exportdata(trendsdata,output_file_name,sheetname,data_type):
     ファイル出力
     """
     try:
-        fm = 'print'
+        fm = 'excel'
         if data_type == 1:
             data = [i for i in trendsdata.values()]
             for d1 in data:
@@ -248,7 +240,6 @@ def main():
 
         #キーワードファイル取得
         kw_lists = importfile(input_file)
-        print(kw_lists)
         for kw in kw_lists:
             if kw:
                 #tframe='today 5-y'
