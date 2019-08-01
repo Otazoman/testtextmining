@@ -8,6 +8,7 @@ from requests_oauthlib import OAuth1
 import os
 import pprint
 import sys
+import time
 import traceback
 import yaml
 
@@ -73,7 +74,7 @@ def post_blogger(postcontent):
                   "kind": "blogger#post",
                   "id": blogid,
                   "title": "POSTED_" + postcontent,
-                  "content":"<div>" + postcontent + "</div>"
+                  "content": postcontent
               }
         insert = posts.insert(blogId=blogid, body=body)
         posts_doc = insert.execute()
@@ -118,7 +119,6 @@ def post_twitter(postcontent):
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
 
-
 def post_hatena(postword,url,tags):
     """
     はてなブックマークに追加
@@ -149,6 +149,20 @@ def post_hatena(postword,url,tags):
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
 
+def getpostdata(inputfile_name):
+    """
+    投稿用データ取得
+    """
+    try:
+        #ファイルオープン
+        with open(inputfile_name) as f:
+             r = [e for inner_list in json.load(f) for e in inner_list]
+             return r
+
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
 
 def main():
     """
@@ -156,13 +170,39 @@ def main():
 
     """
     try:
-        print("呟く内容は？")
-        content = input('>> ')
-        #post_twitter(content)
-        tags = ["IT","Program","インフラ関連"]
-        bookmark_url = "https://it.impressbm.co.jp/"
-        post_hatena(content,bookmark_url,tags)
-        post_blogger(content)
+        start_t = time.perf_counter()
+        print('Please input inputfilename')
+        input_file = input('>>')
+        if not input_file:
+           print("Please input inputfilename!!")
+           sys.exit()
+        json_data = getpostdata(input_file)
+        for s in json_data:
+            ohtml = """
+            <div id = content>
+                <div id ='name'>
+                   取得元：{0}
+                </div>
+                <div id ='title'>
+                   記事タイトル:{1}
+                </div>
+                <a href ="{2}">記事リンク</a>
+                <div id ='updateddate'>
+                   更新日時:{3}
+                </div>
+            </div>
+            """
+            content = ohtml.format(s['name'], s['title'], s['link'], s['updated'])
+            tags=[]
+            tags.append(s['category'])
+            bookmark_url = s['link']
+            post_hatena('TEST',bookmark_url,tags)
+            post_blogger(content)
+
+            #print(s['description'])
+        end_t = time.perf_counter()
+        process_time = end_t - start_t
+        print('処理時間は:{0}秒です。'.format(process_time))        
 
     except Exception as e:
         t, v, tb = sys.exc_info()
