@@ -1,7 +1,7 @@
-TextMining test tool(mecab and Cabocha)
+TextMining sample tool(mecab and Cabocha)
 ====
 
-Japanese Text Mining Test
+Japanese Text Mining sample
 
 ## Description
 このツールはテキストマイニングのサンプルとして作成したツールです。
