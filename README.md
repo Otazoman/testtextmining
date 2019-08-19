@@ -41,8 +41,8 @@ emoji
 
 ## Usage
 $ python3 mecabsample.py inputfilename outputname  
-$ python3 wordcloudsample.py inputfilename outputname   
-$ python3 getrssfeed.py feedlistfilename outputfilename  
+$ python3 wordcloudsample.py   
+$ python3 getrssfeed.py  
 $ python3 word2vecsample1.py word
 
 ## Environment Setup
