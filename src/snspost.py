@@ -1,3 +1,4 @@
+# coding: utf-8
 from apiclient.discovery import build
 import argparse
 import httplib2
@@ -126,7 +127,7 @@ def post_hatena(postword,url,tags):
     try:
         ta = get_authkey('hatena')
         auth = OAuth1(ta['ck'],ta['cs'],ta['at'],ta['ats'])
-        bookmark_api_url = "http://api.b.hatena.ne.jp/1/my/bookmark"
+        bookmark_api_url = "https://bookmark.hatenaapis.com/rest/1/my/bookmark"
         tagstr =""
         for t in tags:
             tagstr = tagstr + "&tags=" + t 
@@ -177,6 +178,7 @@ def main():
            print("Please input inputfilename!!")
            sys.exit()
         json_data = getpostdata(input_file)
+        cnt = 1
         for s in json_data:
             ohtml = """
             <div id = content>
@@ -193,13 +195,14 @@ def main():
             </div>
             """
             content = ohtml.format(s['name'], s['title'], s['link'], s['updated'])
+            comment = 'テスト' + str(cnt)
             tags=[]
             tags.append(s['category'])
             bookmark_url = s['link']
-            post_hatena('TEST',bookmark_url,tags)
+            post_hatena(comment,bookmark_url,tags)
             post_blogger(content)
-
             #print(s['description'])
+            cnt +=1
         end_t = time.perf_counter()
         process_time = end_t - start_t
         print('処理時間は:{0}秒です。'.format(process_time))        
