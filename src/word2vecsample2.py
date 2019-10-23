@@ -7,7 +7,7 @@ import time
 """
 http://swdrsker.hatenablog.com/entry/2017/02/23/193137
 """
-model = word2vec.Word2Vec.load("../corpas/ja_wiki.model")
+model = word2vec.Word2Vec.load("../models/ja_wiki.model")
 
 def neighbor_word(posi, nega=[], n=10):
     count = 1

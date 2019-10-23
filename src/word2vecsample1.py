@@ -40,7 +40,7 @@ def main():
     try:
         argvs = sys.argv
         num = len(argvs)
-        model = word2vec.Word2Vec.load("../corpas/ja_wiki.model")
+        model = word2vec.Word2Vec.load("../models/ja_wiki.model")
         
         start_t = time.perf_counter()
 
