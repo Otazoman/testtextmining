@@ -10,10 +10,10 @@ import re
 import sys
 import time
 import traceback
-
 import feedparser
 import pandas as pd
 from pandas import Series, DataFrame
+
 from pytrends.request import TrendReq
 import mecaboperate as mec
 import openpyxl as opx
