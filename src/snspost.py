@@ -22,7 +22,7 @@ def get_authkey(snsname):
     ymlファイルから設定情報を取得する。
     """
     try:    
-        with open('../config/config.yml', 'r') as yml:
+        with open('../config/sns_config.yml', 'r') as yml:
              config = yaml.safe_load(yml)
              if snsname == 'blogger':
                 client_id     = config[snsname]['client_id']
