@@ -185,6 +185,9 @@ def main():
                 <div id ='name'>
                    取得元：{0}
                 </div>
+                <div id ='name'>
+                   取得元：{1}
+                </div>
                 <div id ='title'>
                    記事タイトル:{1}
                 </div>
@@ -194,11 +197,12 @@ def main():
                 </div>
             </div>
             """
-            content = ohtml.format(s['name'], s['title'], s['link'], s['updated'])
+            content = ohtml.format(s['category'], s['name'], s['title'], s['link'], s['updated'])
             comment = 'テスト' + str(cnt)
             tags=[]
             tags.append(s['category'])
             bookmark_url = s['link']
+            time.sleep(1)
             post_hatena(comment,bookmark_url,tags)
             post_blogger(content)
             #print(s['description'])

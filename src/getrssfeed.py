@@ -11,6 +11,8 @@ import traceback
 
 import feedparser
 import japanesenormaraizer as jn
+import mongo_crud as mon
+
 
 def getfeedurl(infile):
     """
@@ -37,7 +39,8 @@ def rssparse(feedurl,name,category):
     try:
         result=[]
         keys = ['name','category','title','description','link','updated']
-        feed = feedparser.parse(feedurl, response_headers={"content-type": "text/xml; charset=utf-8"})
+        feed = feedparser.parse(feedurl, 
+                response_headers={"content-type": "text/xml; charset=utf-8"})
         for x in feed.entries:
             if x is not None:
                if hasattr(x, 'title') and \
@@ -57,6 +60,33 @@ def rssparse(feedurl,name,category):
            return result
         else:
             return
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
+
+def data_output(output_file,from_feed_data,mode):
+    """
+    取得したRSSデータを出力する
+    """
+    try:
+        mongo = mon.MongoInsert('cr_tohonokai', 'rss_article')
+        if mode=='file':
+           if from_feed_data:
+              with open(output_file,'w') as f:
+                   f.write(json.dumps(from_feed_data, indent=2, 
+                       ensure_ascii=False))
+        elif mode=='db':
+             for media in from_feed_data:
+                 #mongo.insert_many(media)
+                 if media:
+                    for d in media:
+                        mongo.insert_one(d)
+                 #       print(d)
+
+
+
+
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
@@ -96,9 +126,9 @@ def main():
         with ThreadPoolExecutor(max_workers=wk) as executor:
              r = list(executor.map(rssparse, urls,names,categories))
         out=[ e for e in r if e]
-        #ファイルに書込
-        with open(output_file,'w') as f:
-             f.write(json.dumps(out, indent=2, ensure_ascii=False))
+        #データ出力
+        mode = 'db'
+        data_output(output_file,out,mode)
         end_t = time.perf_counter()
         process_time = end_t - start_t
         print('処理時間は:{0}秒です。'.format(process_time))
