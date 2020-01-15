@@ -2,6 +2,7 @@
 # coding: utf-8
 import csv
 import collections
+import datetime
 import json
 import pprint
 import sys
@@ -34,9 +35,12 @@ def getfeedurl(infile):
 
 def rssparse(feedurl,name,category):
     """
-    RSSフィードからタイトルと概要と更新日時を取得する。
+    RSSフィードからＮ時間前のタイトルと概要と更新日時を取得する。
     """
     try:
+        td = datetime.timedelta(hours=-24)    
+        ref_time = datetime.datetime.now() + td
+        rt = ref_time.timetuple()
         result=[]
         keys = ['name','category','title','description','link','updated']
         feed = feedparser.parse(feedurl, 
@@ -47,15 +51,17 @@ def rssparse(feedurl,name,category):
                   hasattr(x, 'description') and \
                   hasattr(x, 'href') and \
                   hasattr(x, 'updated_parsed'):
-                         n = name
-                         c = category
-                         t = jn.strnormaraizer(x.title)
-                         d = jn.strnormaraizer(x.description)
-                         l = x.links[0].href
-                         u = time.strftime('%Y-%m-%d %H:%M:%S',x.updated_parsed)
-                         values = [n,c,t,d,l,u]
-                         o = dict(zip(keys,values))
-                         result.append(o)
+                         if rt < x.updated_parsed:
+                            n = name
+                            c = category
+                            t = jn.strnormaraizer(x.title)
+                            d = jn.strnormaraizer(x.description)
+                            l = x.links[0].href
+                            u = time.strftime('%Y-%m-%d %H:%M:%S',
+                                        x.updated_parsed)
+                            values = [n,c,t,d,l,u]
+                            o = dict(zip(keys,values))
+                            result.append(o)
         if result:
            return result
         else:
@@ -109,10 +115,12 @@ def main():
         print('Please input outputfilename')
         output_file = input('>>')
         if not output_file:
-           output_file = input_file + ".json"
-           print('outputfilename auto generate {0}'.format(output_file))
+           mode = 'db'
+           #output_file = input_file + ".json"
+           #print('outputfilename auto generate {0}'.format(output_file))
         else:
-            output_file = output_file +".json"
+           mode = 'file'
+           output_file = output_file +".json"
 
         feedlists = getfeedurl(input_file)
         size = len(feedlists)
@@ -127,7 +135,6 @@ def main():
              r = list(executor.map(rssparse, urls,names,categories))
         out=[ e for e in r if e]
         #データ出力
-        mode = 'db'
         data_output(output_file,out,mode)
         end_t = time.perf_counter()
         process_time = end_t - start_t
