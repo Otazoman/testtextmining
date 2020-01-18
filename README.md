@@ -123,4 +123,21 @@ $ pip install --upgrade tlslite oauth2client
 $ pip install --upgrade pyyaml   
 $ pip install --upgrade pytrends  
 $ pip install --upgrade xlwt openpyxl xlsxwriter   
+$ pip install --upgrade mongo   
+
+## Word2vec Pre operation  
+$ sudo apt-get -y install nkf   
+$ mkdir models   
+$ cd models   
+$ mkdir corpasdatamake   
+$ cd corpasdatamake/   
+$ git clone https://github.com/attardi/wikiextractor   
+$ curl https://dumps.wikimedia.org/jawiki/latest/jawiki-latest-pages-articles.xml.bz2 -o jawiki-latest-pages-articles.xml.bz2   
+$ python wikiextractor/WikiExtractor.py jawiki-latest-pages-articles.xml.bz2   
+$ python ../../src/datacleaning.py text
+$ cat text/*/* > jawiki.txt   
+$ mecab -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd -Owakati jawiki.txt -o data.txt -b 16384   
+$ nkf -w --overwrite data.txt   
+$ python ../../src/modelmake.py   
+ 
 
