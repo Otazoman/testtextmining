@@ -136,6 +136,7 @@ $ curl https://dumps.wikimedia.org/jawiki/latest/jawiki-latest-pages-articles.xm
 $ python wikiextractor/WikiExtractor.py jawiki-latest-pages-articles.xml.bz2   
 $ python ../../src/datacleaning.py text
 $ cat text/*/* > jawiki.txt   
+$ sudo ../../mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n  
 $ mecab -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd -Owakati jawiki.txt -o data.txt -b 16384   
 $ nkf -w --overwrite data.txt   
 $ python ../../src/modelmake.py   
