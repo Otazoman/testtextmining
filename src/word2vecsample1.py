@@ -9,7 +9,7 @@ def comp_words(model,word1,word2):
     与えられた複数の言葉の近似値を比較する
     """
     try:
-         r = model.similarity(word1, word2)
+         r = model.wv.similarity(word1, word2)
          if r:
             return r
     except Exception as e:

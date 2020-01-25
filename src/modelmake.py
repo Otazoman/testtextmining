@@ -1,4 +1,4 @@
-from gensim.models import word2ve1
+from gensim.models import word2vec
 import logging
 import subprocess
 import sys
@@ -16,12 +16,12 @@ try:
     sentences = word2vec.Text8Corpus(inputfile)
 
     #model = word2vec.Word2Vec(sentences, size=200, min_count=20, window=15)
-    model = word2vec.Word2Vec(sentences, sg=1, size=200, min_count=2, 
-                              window=15, iter=4000, workers=20)
+    model = word2vec.Word2Vec(sentences, sg=1, size=500, min_count=2, 
+                              window=15, iter=10, workers=20)
     #model = word2vec.Word2Vec(sentences, size=100, min_count=2, window=15, 
-    #                          iter=500)
+    #                          iter=30)
     model.save(outputmodel)
-    cmd = 'echo "Task End" | mail -s "Operation End" nishimuramasaki@gmail.com'
+    cmd = 'echo "Task End"' 
     subprocess.check_output(cmd , shell=True)    
 
 except Exception as e:
