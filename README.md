@@ -124,6 +124,8 @@ $ pip install --upgrade pyyaml
 $ pip install --upgrade pytrends  
 $ pip install --upgrade xlwt openpyxl xlsxwriter   
 $ pip install --upgrade mongo   
+$ pip install --upgrade nltk     
+$ pip install --upgrade TextBlob   
 
 ## Word2vec Pre operation  
 $ sudo apt-get -y install nkf   
