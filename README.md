@@ -126,6 +126,8 @@ $ pip install --upgrade xlwt openpyxl xlsxwriter
 $ pip install --upgrade mongo   
 $ pip install --upgrade nltk     
 $ pip install --upgrade TextBlob   
+$ pip install --upgrade Environment    
+
 
 ## Word2vec Pre operation  
 $ sudo apt-get -y install nkf   

@@ -88,11 +88,6 @@ def data_output(output_file,from_feed_data,mode):
                  if media:
                     for d in media:
                         mongo.insert_one(d)
-                 #       print(d)
-
-
-
-
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
