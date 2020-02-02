@@ -127,6 +127,9 @@ $ pip install --upgrade mongo
 $ pip install --upgrade nltk     
 $ pip install --upgrade TextBlob   
 $ pip install --upgrade Environment    
+$ pip install --upgrade sumy    
+$ pip install --upgrade  tinysegmenter      
+
 
 
 ## Word2vec Pre operation  
