@@ -128,7 +128,10 @@ $ pip install --upgrade nltk
 $ pip install --upgrade TextBlob   
 $ pip install --upgrade Environment    
 $ pip install --upgrade sumy    
-$ pip install --upgrade  tinysegmenter      
+$ pip install --upgrade tinysegmenter      
+$ pip install --upgrade selenium      
+$ pip install --upgrade chromedriver-binary      
+$ pip install --upgrade pyvirtualdisplay      
 
 
 
@@ -148,4 +151,9 @@ $ mecab -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd -Owakati jaw
 $ nkf -w --overwrite data.txt   
 $ python ../../src/modelmake.py   
  
+## Chrome Install   
+$ curl https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -    
+$ echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list    
+$ sudo apt update    
+$ sudo apt -y install google-chrome-stable    
 
