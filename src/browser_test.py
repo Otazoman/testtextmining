@@ -5,17 +5,12 @@ import subprocess
 import time
 
 from selenium import webdriver
-#from selenium.webdriver.chrome.options import Options
-#from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 
 
 chrome_path = '/usr/bin/google-chrome'
-
 
 def screenShotFull(driver, filename, timeout=30):
     '''フルページ スクリーンショット'''
@@ -33,7 +28,6 @@ def screenShotFull(driver, filename, timeout=30):
         + ' --screenshot=' + filename + '.png' \
         + ' --window-size=' + str(w) + ',' + str(h) \
         + ' ' + url
-    print(cmd)
 
     # コマンド実行
     subprocess.Popen(cmd, shell=True,
@@ -53,7 +47,6 @@ def main():
         options.add_argument('--remote-debugging-port=9222')
         driver = webdriver.Chrome(options=options)
         
-        #url = "https://developers.google.com/web/updates/2017/04/headless-chrome?hl=ja"
         url = "https://google.co.jp/"
         driver.get(url)
 
@@ -64,31 +57,18 @@ def main():
                 EC.presence_of_element_located((By.CLASS_NAME, 
                     INPUT_BOX_CLASS_NAME)))
 
-        # 検索テキストボックスをクリアする
-        #for item in range(0,100) :
-        #    element.send_keys(Keys.BACK_SPACE)
-        #code = "ChromeDriver"
-        #element.send_keys(code)
-        #element.send_keys(Keys.RETURN)        
-
-        
         search_box = driver.find_element_by_name("q")
         search_box.send_keys('ChromeDriver')
-        driver.save_screenshot(f'screenshot.png')
         search_box.submit()
-
-        print(driver.title)
-
-        # htmlを取得・表示
-        #html = driver.page_source
-        #print(html)
 
         current_time = datetime.datetime.today()
         current_time_str = current_time.strftime("%Y%m%d%H%M%S")
-        #driver.save_screenshot(f'screenshot-full-{current_time_str}.png')
-        filename = (f'screenshot-full-{current_time_str}') 
-        screenShotFull(driver, filename)        
-
+        w = driver.execute_script("return document.body.scrollWidth;")
+        h = driver.execute_script("return document.body.scrollHeight;")
+        driver.set_window_size(w,h)
+        driver.save_screenshot(f'screenshot-full-{current_time_str}.png')
+        #filename = (f'screenshot-full-{current_time_str}') 
+        #screenShotFull(driver, filename)        
         driver.quit()
 
 if __name__ == '__main__':
