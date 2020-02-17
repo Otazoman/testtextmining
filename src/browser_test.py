@@ -12,30 +12,30 @@ from selenium.webdriver.common.by import By
 
 chrome_path = '/usr/bin/google-chrome'
 
-def screenShotFull(driver, filename, timeout=30):
-    '''フルページ スクリーンショット'''
-    # url取得
-    url = driver.current_url
-    # ページサイズ取得
+def operateBrawser(driver, url):
+    driver.get(url)
+
+    #指定された要素(検索テキストボックス)がDOM上に現れるまで待機する
+    MAX_WAIT_TIME_SEC = 100
+    INPUT_BOX_CLASS_NAME = "gLFyf"
+    element = WebDriverWait(driver, MAX_WAIT_TIME_SEC).until(
+            EC.presence_of_element_located((By.CLASS_NAME,
+                INPUT_BOX_CLASS_NAME)))
+    #Google検索でChromeDriverを検索する
+    search_box = driver.find_element_by_name("q")
+    search_box.send_keys('yahoo')
+    search_box.submit()
+    return driver
+
+
+def screenShot(driver, filename):
     w = driver.execute_script("return document.body.scrollWidth;")
     h = driver.execute_script("return document.body.scrollHeight;")
-    # コマンド作成
-    cmd = 'timeout ' + str(timeout)  \
-        + ' "' + chrome_path +'"' \
-        + ' --headless' \
-        + ' --hide-scrollbars' \
-        + ' --incognito' \
-        + ' --screenshot=' + filename + '.png' \
-        + ' --window-size=' + str(w) + ',' + str(h) \
-        + ' ' + url
-
-    # コマンド実行
-    subprocess.Popen(cmd, shell=True,
-                     stdout=subprocess.PIPE,
-                     stderr=subprocess.STDOUT)
+    driver.set_window_size(w,h)
+    driver.save_screenshot(filename)
+    return driver
 
 def main():
-
         options = webdriver.ChromeOptions()
         options.binary_location = chrome_path 
         options.add_argument('--headless')
@@ -47,28 +47,15 @@ def main():
         options.add_argument('--remote-debugging-port=9222')
         driver = webdriver.Chrome(options=options)
         
+        #ブラウザで操作したいURLを指定
         url = "https://google.co.jp/"
-        driver.get(url)
+        driver = operateBrawser(driver,url)
 
-        #指定された要素(検索テキストボックス)がDOM上に現れるまで待機する
-        MAX_WAIT_TIME_SEC = 100
-        INPUT_BOX_CLASS_NAME = "gLFyf"
-        element = WebDriverWait(driver, MAX_WAIT_TIME_SEC).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 
-                    INPUT_BOX_CLASS_NAME)))
-
-        search_box = driver.find_element_by_name("q")
-        search_box.send_keys('ChromeDriver')
-        search_box.submit()
-
+        #スクリーンショット
         current_time = datetime.datetime.today()
         current_time_str = current_time.strftime("%Y%m%d%H%M%S")
-        w = driver.execute_script("return document.body.scrollWidth;")
-        h = driver.execute_script("return document.body.scrollHeight;")
-        driver.set_window_size(w,h)
-        driver.save_screenshot(f'screenshot-full-{current_time_str}.png')
-        #filename = (f'screenshot-full-{current_time_str}') 
-        #screenShotFull(driver, filename)        
+        file_name=(f'screenshot-full-{current_time_str}.png')
+        driver = screenShot(driver, file_name)
         driver.quit()
 
 if __name__ == '__main__':
