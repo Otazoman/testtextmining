@@ -56,14 +56,19 @@ def find_mongo():
         #for doc in find:
         #    print(doc)
         #print('---------------------------------------------') 
-        find = mongo.find({'_id':0,'name':1,'category':1,'title':1,
-            'addlabel':1,'poststatus':1,'updated':1}) 
+#        find = mongo.find({'_id':0,'name':1,'category':1,'title':1,
+#            'addlabel':1,'labelstat':1,'updated':1},filter={'dupukey': {'$ne':"DUPULECATE"}}) 
         i = 0
+        find = mongo.find({'_id':0,'name':1,'category':1,'title':1,
+            'addlabel':1,'labelstat':1,'poststatus':1,'updated':1},filter={'labelstat':'added'}) 
         for doc in find:
             print(doc)
             i +=1
         print('---------------------------------------------') 
         print('レコード：'+str(i)+'件')
+        cmongo = mon.MongoCount('cr_tohonokai', 'rss_article')
+        cnt = cmongo.count({})
+        print('全件'+str(cnt)+'件')
 
         #find = mongo.find(filter={'updated':{'$gte': start,'$lt': end}},
         #        projection={'_id':0,})

@@ -1,49 +1,39 @@
-#!/usr/bin/env python3
-# coding: utf-8
-import os
-from flask import Flask, request, redirect, session
-from furl import furl
-from requests_oauthlib import OAuth1Session
+import urllib
+import webbrowser
 
-app = Flask(__name__)
-# xxxxxには、取得したランダムなシークレットキーを入力する。
-app.secret_key = b""
+import requests
+from requests_oauthlib import OAuth1
 
-OAUTH_CONSUMER_KEY = ''
-OAUTH_CONSUMER_SECRET = ''
 
-TEMPORARY_CREDENTIAL_REQUEST_URL = 'https://www.hatena.com/oauth/initiate'
-RESOURCE_OWNER_AUTHORIZATION_URL = 'https://www.hatena.ne.jp/oauth/authorize'
-TOKEN_REQUEST_URL = 'https://www.hatena.com/oauth/token'
+API_KEY = ''
+SECRET_KEY = ''
 
-CALLBACK_URI = 'http://127.0.0.1:5000/callback_page'
-SCOPE = {'scope': 'read_public,write_public'}
+request_url = 'https://www.hatena.ne.jp/oauth/initiate?scope=read_public%2Cread_private%2Cwrite_public%2Cwrite_private'
+authorize_url = 'https://www.hatena.ne.jp/oauth/authorize'
+access_token_url = 'https://www.hatena.ne.jp/oauth/token'
+callback_uri = 'oob'
 
-@app.route('/')
-def index():
-    oauth = OAuth1Session(OAUTH_CONSUMER_KEY, client_secret=OAUTH_CONSUMER_SECRET, callback_uri=CALLBACK_URI)
-    fetch_response = oauth.fetch_request_token(TEMPORARY_CREDENTIAL_REQUEST_URL, data=SCOPE)
 
-    session['request_token'] = fetch_response.get('oauth_token')
-    session['request_token_secret'] = fetch_response.get('oauth_token_secret')
+def oauth_requests():
+    # Get request token
+    auth = OAuth1(API_KEY, SECRET_KEY, callback_uri=callback_uri)
+    r = requests.post(request_url, auth=auth)
+    request_token = dict(urllib.parse.parse_qsl(r.text))
 
-    redirect_url = furl(RESOURCE_OWNER_AUTHORIZATION_URL)
-    redirect_url.args['oauth_token'] = session['request_token']
-    return redirect(redirect_url.url)
+    # User Authorization
+    print('%s?oauth_token=%s&perms=delete' % (authorize_url, 
+        request_token['oauth_token']))
+    oauth_verifier = input("Please input PIN code:")
+    auth = OAuth1(
+        API_KEY,
+        SECRET_KEY,
+        request_token['oauth_token'],
+        request_token['oauth_token_secret'],
+        verifier=oauth_verifier)
+    r = requests.post(access_token_url, auth=auth)
 
-@app.route('/callback_page')
-def callback_page():
-    verifier = request.args.get('oauth_verifier')
-    oauth = OAuth1Session(OAUTH_CONSUMER_KEY,
-                          client_secret=OAUTH_CONSUMER_SECRET,
-                          resource_owner_key=session['request_token'],
-                          resource_owner_secret=session['request_token_secret'],
-                          verifier=verifier)
-
-    access_tokens = oauth.fetch_access_token(TOKEN_REQUEST_URL)
-    access_token = access_tokens.get('oatuh_token')
-    access_secret = access_tokens.get('oauth_token_secret')
-    return "access_token: {}, access_token_secret: {}".format(access_token, access_secret)
+    access_token = dict(urllib.parse.parse_qsl(r.text))
+    return access_token
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    print(oauth_requests())

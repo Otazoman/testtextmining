@@ -23,6 +23,15 @@ def connDB(self, dbName, collectionName):
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
 
+"""Count"""
+class MongoCount(object):
+    def __init__(self, dbName, collectionName):
+        self.collection = connDB(self, dbName, collectionName)
+
+    def count(self,filter=None):
+        return self.collection.count_documents(filter)
+
+
 """ Find """
 class MongoFind(object):
     def __init__(self, dbName, collectionName):
