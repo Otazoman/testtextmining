@@ -135,7 +135,7 @@ def post_hatena(postword,url,tags):
                 bookmark_api_url + "?url=" + url + 
                 "&comment=" + postword  +
                 tagstr + 
-                "&post_twitter=1",auth=auth
+                "&private=1",auth=auth
               )
         
         if req.status_code == 200:
@@ -204,7 +204,7 @@ def main():
             bookmark_url = s['link']
             time.sleep(1)
             post_hatena(comment,bookmark_url,tags)
-            post_blogger(content)
+            #post_blogger(content)
             #post_twitter(comment)
             #print(s['description'])
             cnt +=1
