@@ -100,7 +100,7 @@ def post_twitter(postcontent):
         twitter = OAuth1Session(ta['ck'],ta['cs'],ta['at'],ta['ats'])
         get_url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
         post_url = "https://api.twitter.com/1.1/statuses/update.json"
-        tweet = postword
+        tweet = postcontent
         print('-------------------------------')
         params = {"status" : tweet}
         req = twitter.post(post_url, params = params)
@@ -203,9 +203,9 @@ def main():
             tags.append(s['category'])
             bookmark_url = s['link']
             time.sleep(1)
-            post_hatena(comment,bookmark_url,tags)
+            #post_hatena(comment,bookmark_url,tags)
             #post_blogger(content)
-            #post_twitter(comment)
+            post_twitter(comment)
             #print(s['description'])
             cnt +=1
         end_t = time.perf_counter()
