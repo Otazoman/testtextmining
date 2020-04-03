@@ -16,10 +16,9 @@ try:
     sentences = word2vec.Text8Corpus(inputfile)
 
     #model = word2vec.Word2Vec(sentences, size=200, min_count=20, window=15)
-    model = word2vec.Word2Vec(sentences, sg=1, size=500, min_count=2, 
-                              window=15, iter=10, workers=20)
-    #model = word2vec.Word2Vec(sentences, size=100, min_count=2, window=15, 
-    #                          iter=30)
+    #model = word2vec.Word2Vec(sentences, sg=1, size=500, min_count=2, 
+    #                          window=15, iter=10, workers=20)
+    model = word2vec.Word2Vec(sentences, size=200, min_count=20, window=15)
     model.save(outputmodel)
     cmd = 'echo "Task End"' 
     subprocess.check_output(cmd , shell=True)    

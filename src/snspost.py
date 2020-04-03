@@ -203,8 +203,8 @@ def main():
             tags.append(s['category'])
             bookmark_url = s['link']
             time.sleep(1)
-            #post_hatena(comment,bookmark_url,tags)
-            #post_blogger(content)
+            post_hatena(comment,bookmark_url,tags)
+            post_blogger(content)
             post_twitter(comment)
             #print(s['description'])
             cnt +=1
