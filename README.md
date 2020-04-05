@@ -144,7 +144,7 @@ $ cd corpasdatamake/
 $ git clone https://github.com/attardi/wikiextractor   
 $ curl https://dumps.wikimedia.org/jawiki/latest/jawiki-latest-pages-articles.xml.bz2 -o jawiki-latest-pages-articles.xml.bz2   
 $ python wikiextractor/WikiExtractor.py jawiki-latest-pages-articles.xml.bz2   
-$ python ../../src/datacleaning.py text
+$ python ../../src/datacleaning.py text  
 $ cat text/*/* > jawiki.txt   
 $ sudo ../../mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n  
 $ mecab -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd -Owakati jawiki.txt -o data.txt -b 16384   
