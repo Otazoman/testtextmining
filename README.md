@@ -149,7 +149,7 @@ $ cat text/*/* > jawiki.txt
 $ sudo ../../mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n  
 $ mecab -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd -Owakati jawiki.txt -o data.txt -b 16384   
 $ nkf -w --overwrite data.txt   
-$ python ../../src/modelmake.py   
+$ python ../../src/modelmake.py data.txt jawiki.model    
  
 ## Chrome Install   
 $ curl https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -    
