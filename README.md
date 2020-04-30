@@ -157,5 +157,39 @@ $ echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | s
 $ sudo apt update    
 $ sudo apt -y install google-chrome-stable    
 
+## MongoDB Install  
+$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4  
+$ echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list  
+$ sudo apt update  
+$ sudo apt install -y mongodb-org  
+$ mongod --version  
+$ mongo --version  
+$ sudo systemctl start mongod  
+$ sudo systemctl enable mongod  
+$ mongo  
+>use databasename  
+> db.createUser({user: "user",pwd: "password",roles: [{ role: "userAdmin", db: "databasename" },{ role: "dbAdmin", db: "databasename" },{ role: "readWrite", db: "databasename" }]})    
+> exit
+$ sudo vi /etc/mongod.conf  
+*added  
+----------------------------  
+security:  
+  authorization: enabled  
+----------------------------  
+$ sudo systemctl restart mongod  
+$ mongo  
+> use databasename  
+> db.auth("user", "password")  
+### insert  
+>db.databasename.insert({new_column1: 'new_value1', new_column2: 'A9991', date_column: ISODate()})
+### select  
+db.databasename.find({date_column:{$lte:ISODate()}},{_id:0})  
+### update  
+db.databasename.update({new_column2: /.*2$/}, {$set:{flg:'True'}}, false, true)  
+db.databasename.update({new_column2: /.*2$/}, {$set:{new_Column2:'C9992'}})  
+### delete  
+db.databasename.remove({date_column:{$gte:ISODate("2019-11-14T00:00:00Z"),$lte:ISODate("2019-11-14T09:00:00Z")}})  
+db.databasename.drop()  
+
 ## WordNet  
 
