@@ -157,3 +157,5 @@ $ echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | s
 $ sudo apt update    
 $ sudo apt -y install google-chrome-stable    
 
+## WordNet  
+
