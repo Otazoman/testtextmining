@@ -170,26 +170,29 @@ $ mongo
 >use databasename  
 > db.createUser({user: "user",pwd: "password",roles: [{ role: "userAdmin", db: "databasename" },{ role: "dbAdmin", db: "databasename" },{ role: "readWrite", db: "databasename" }]})    
 > exit
+>  
+
 $ sudo vi /etc/mongod.conf  
 *added  
-"""
+"""  
 security:  
   authorization: enabled  
 """  
 $ sudo systemctl restart mongod  
 $ mongo  
+
 > use databasename  
 > db.auth("user", "password")  
 ### insert  
 >db.databasename.insert({new_column1: 'new_value1', new_column2: 'A9991', date_column: ISODate()})
 ### select  
-db.databasename.find({date_column:{$lte:ISODate()}},{_id:0})  
+> db.databasename.find({date_column:{$lte:ISODate()}},{_id:0})  
 ### update  
-db.databasename.update({new_column2: /.*2$/}, {$set:{flg:'True'}}, false, true)  
-db.databasename.update({new_column2: /.*2$/}, {$set:{new_Column2:'C9992'}})  
+> db.databasename.update({new_column2: /.*2$/}, {$set:{flg:'True'}}, false, true)  
+> db.databasename.update({new_column2: /.*2$/}, {$set:{new_Column2:'C9992'}})  
 ### delete  
-db.databasename.remove({date_column:{$gte:ISODate("2019-11-14T00:00:00Z"),$lte:ISODate("2019-11-14T09:00:00Z")}})  
-db.databasename.drop()  
+> db.databasename.remove({date_column:{$gte:ISODate("2019-11-14T00:00:00Z"),$lte:ISODate("2019-11-14T09:00:00Z")}})  
+> db.databasename.drop()  
 
 ## WordNet  
 
