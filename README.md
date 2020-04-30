@@ -172,10 +172,10 @@ $ mongo
 > exit
 $ sudo vi /etc/mongod.conf  
 *added  
-----------------------------  
+"""
 security:  
   authorization: enabled  
-----------------------------  
+"""  
 $ sudo systemctl restart mongod  
 $ mongo  
 > use databasename  
