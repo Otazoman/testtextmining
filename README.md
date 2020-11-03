@@ -60,7 +60,7 @@ $ pyenv global 3.7.7
 $ pip install --upgrade pip  
 
 ### MeCabインストール
-$ sudo apt -y install mecab libmecab-dev mecab-ipadic-utf8 mecab-jumandic-utf8  
+$ sudo apt -y install mecab libmecab-dev mecab-ipadic-utf8 mecab-jumandic-utf8 python-mecab     
 $ sudo apt -y install swig fonts-ipaexfont nkf  
 $ pip install mecab-python3     
 $ git clone https://github.com/neologd/mecab-ipadic-neologd.git
