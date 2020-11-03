@@ -60,7 +60,7 @@ def find_mongo():
 #            'addlabel':1,'labelstat':1,'updated':1},filter={'dupukey': {'$ne':"DUPULECATE"}}) 
         i = 0
         find = mongo.find({'_id':0,'name':1,'category':1,'title':1,
-            'addlabel':1,'labelstat':1,'poststatus':1,'updated':1},filter={'labelstat':'added'}) 
+            'addlabel':1,'labelstat':1,'poststatus':1,'updated':1},filter={'poststatus':{'$ne':'POSTED'}}) 
         for doc in find:
             print(doc)
             i +=1

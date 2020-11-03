@@ -55,22 +55,32 @@ $ echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
 $ echo 'eval "$(pyenv init -)"' >> ~/.bashrc  
 $ source ~/.bashrc  
 $ pyenv install --list  
-$ pyenv install 3.7.3  
-$ pyenv install 2.7.16  
-$ pyenv global 3.7.3   
+$ pyenv install 3.7.7  
+$ pyenv global 3.7.7   
 $ pip install --upgrade pip  
 
 ### MeCabインストール
-$ sudo apt -y install mecab libmecab-dev mecab-ipadic-utf8 mecab-jumandic-utf8 python-mecab  
+$ sudo apt -y install mecab libmecab-dev mecab-ipadic-utf8 mecab-jumandic-utf8  
 $ sudo apt -y install swig fonts-ipaexfont nkf  
-$ pip install mecab-python3  
+$ pip install mecab-python3     
 $ git clone https://github.com/neologd/mecab-ipadic-neologd.git
 $ cd mecab-ipadic-neologd  
 $ chmod -R +x bin build diff libexec misc seed   
 $ sudo bin/install-mecab-ipadic-neologd  
 $ echo `mecab-config --dicdir`"/mecab-ipadic-neologd"  
 /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd  
-$ cd ../  
+$ cd   
+#### MeCabとnltkエラー時
+$ pip install unidic-lite    
+$ pip install mecab-python3==0.996.5    
+$ python    
+import nltk    
+nltk.download()    
+Downloader> d    
+Download which package (l=list; x=cancel)?    
+  Identifier> all    
+Downloader> q    
+True    
 
 ### Cabochaインストール
 $ wget -O CRF++-0.58.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7QVR6VXJ5dWExSTQ"  
